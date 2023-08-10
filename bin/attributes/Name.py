@@ -43,8 +43,9 @@ class Name(BaseAttribute):
 
     def initials(self):
         """Returns the initials of the name."""
-        initials = [self._name[0], self._surname[0]]
+        initials = [self._name[0]]
         initials += [name[0] for name in self._middlenames]
+        initials.append(self._surname[0])
         return ".".join(initials) + "."
 
     def __str__(self):
