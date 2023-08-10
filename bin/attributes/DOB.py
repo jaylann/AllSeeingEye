@@ -38,23 +38,12 @@ class DOB(BaseAttribute):
 
         # Define a list of possible date formats
         date_formats = [
-            "%Y-%m-%d",  # Format like "2023-08-10"
-            "%d-%m-%Y",  # Format like "10-08-2023"
-            "%m/%d/%Y",  # Format like "08/10/2023"
-            "%Y/%m/%d",  # Format like "2023/08/10"
-            "%d/%m/%Y",  # Format like "10/08/2023"
-            "%m-%d-%Y",  # Format like "08-10-2023"
-            "%Y.%m.%d",  # Format like "2023.08.10"
-            "%d.%m.%Y",  # Format like "10.08.2023"
-            "%B %d, %Y",  # Format like "August 10, 2023"
-            "%d %B %Y",  # Format like "10 August 2023"
-            "%d %b %Y",  # Format like "10 Aug 2023"
-            "%A, %d %B %Y",  # Format like "Thursday, 10 August 2023"
-            "%a, %d %b %Y",  # Format like "Thu, 10 Aug 2023"
-            "%d-%m-%y",  # Format like "10-08-23"
-            "%m-%d-%y",  # Format like "08-10-23"
-            "%d/%m/%y",  # Format like "10/08/23"
-            "%m/%d/%y",  # Format like "08/10/23"
+            # Day-Month-Year formats
+            "%d-%m-%Y", "%d/%m/%Y", "%d.%m.%Y", "%d %B %Y", "%d %b %Y",
+            "%A, %d %B %Y", "%a, %d %b %Y", "%d-%m-%y", "%d/%m/%y",
+
+            # Year-Month-Day formats (universal)
+            "%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d", "%Y %B %d", "%Y %b %d",
             # Add more formats as needed
         ]
 
@@ -67,3 +56,4 @@ class DOB(BaseAttribute):
 
         # If none of the formats match, raise an error
         raise ValueError("Invalid date of birth format")
+
