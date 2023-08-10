@@ -2,8 +2,10 @@ from datetime import datetime
 
 
 class Person:
-    def __init__(self, dob):
+    def __init__(self, dob, name, address):
         self.DOB = dob
+        self.name = name
+        self.address = address
 
     @property
     def age(self):
