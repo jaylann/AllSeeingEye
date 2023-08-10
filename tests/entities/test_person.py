@@ -1,4 +1,6 @@
 import unittest
+
+from bin.attributes.PhoneNumber import PhoneNumber
 from bin.entities.Person import Person
 from bin.objects.Proof import Proof
 from datetime import datetime
@@ -37,6 +39,22 @@ class TestPersonIntegration(unittest.TestCase):
     def test_address(self):
         self.assertEqual(str(self.person.address), "123 Main St, New York, NY, USA - 10001")
 
+    def test_location_with_phone_number(self):
+        phone_number = PhoneNumber("+1-202-555-0172", proof="Proof not provided")  # US phone number
+        self.person.phone_number = phone_number
+        self.assertEqual(self.person.location, 'US')
+
+    def test_location_with_explicit_location(self):
+        phone_number = PhoneNumber("+1-202-555-0172", proof="Proof not provided")  # US phone number
+        explicit_location = 'CA'  # Canada
+        self.person.phone_number = phone_number
+        self.person.location = explicit_location
+        self.assertEqual(self.person.location, explicit_location)
+
+    def test_location_with_german_phone_number(self):
+        phone_number = PhoneNumber("+491771231231", proof="Proof not provided")  # German phone number
+        self.person.phone_number = phone_number
+        self.assertEqual(self.person.location, 'DE')
 
 if __name__ == "__main__":
     unittest.main()
