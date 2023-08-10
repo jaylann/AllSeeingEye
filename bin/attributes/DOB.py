@@ -1,10 +1,11 @@
 from bin.attributes.BaseAttribute import BaseAttribute
 from datetime import datetime
 
+
 class DOB(BaseAttribute):
-    def __init__(self, dob, proof):
+    def __init__(self, dob: str or datetime, proof):
         super().__init__(proof)
-        self.DOB = self.convert_to_date(dob)
+        self.DOB = self.convert_to_date(dob) if type(dob) == str else dob
 
     @property
     def day(self):
@@ -32,9 +33,6 @@ class DOB(BaseAttribute):
 
     @staticmethod
     def convert_to_date(dob):
-        # If dob is already a datetime object, simply return it
-        if isinstance(dob, datetime):
-            return dob
 
         # Define a list of possible date formats
         date_formats = [
@@ -56,4 +54,3 @@ class DOB(BaseAttribute):
 
         # If none of the formats match, raise an error
         raise ValueError("Invalid date of birth format")
-
