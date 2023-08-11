@@ -1,3 +1,6 @@
+import json
+import os
+
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 
@@ -9,8 +12,26 @@ class Address(BaseAttribute):
         self.street = street
         self.city = city
         self.state = state
-        self.country = country
+        self.country = self._convert_country_to_code(country)
         self.postal_code = postal_code
+
+    def _load_country_codes(self):
+        file_path = os.path.join(self.get_content_root(), '_internal', 'mappings', 'country_codes.json')
+        with open(file_path, "r") as file:
+            return json.load(file)
+
+    def get_content_root(self):
+        # Get the directory of the current file
+        current_file_path = os.path.abspath(__file__)
+        # Navigate up to the project root (modify as needed for your directory structure)
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
+        return project_root
+
+    def _convert_country_to_code(self, country_name):
+        for code, names in self._load_country_codes().items():
+            if country_name.lower() in [name.lower() for name in names]:
+                return code
+        return country_name
 
     @property
     def street(self):

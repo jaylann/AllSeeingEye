@@ -6,14 +6,14 @@ from bin.attributes.Address import Address  # Make sure to import your Address c
 class TestAddress(unittest.TestCase):
     def setUp(self):
         self.proof = 'ID Card'  # Example proof
-        self.address = Address('123 Main St', 'Springfield', 'IL', 'USA', '62701', self.proof)
+        self.address = Address('123 Main St', 'Springfield', 'IL', 'USA', 62701, self.proof)
 
     def test_initialization(self):
         self.assertEqual(self.address.street, '123 Main St')
         self.assertEqual(self.address.city, 'Springfield')
         self.assertEqual(self.address.state, 'IL')
-        self.assertEqual(self.address.country, 'USA')
-        self.assertEqual(self.address.postal_code, '62701')
+        self.assertEqual(self.address.country, 'US')
+        self.assertEqual(self.address.postal_code, 62701)
 
     def test_street_property(self):
         new_street = '456 Elm St'
@@ -41,7 +41,7 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(self.address.postal_code, new_postal_code)
 
     def test_str_representation(self):
-        expected_str = '123 Main St, Springfield, IL, USA - 62701'
+        expected_str = '123 Main St, Springfield, IL, US - 62701'
         self.assertEqual(str(self.address), expected_str)
 
 
