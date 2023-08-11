@@ -1,4 +1,5 @@
 import unittest
+
 from bin.attributes.Name import Name
 from bin.objects.Proof import Proof
 

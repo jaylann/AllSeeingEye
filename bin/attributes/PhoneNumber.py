@@ -1,6 +1,7 @@
 import phonenumbers
 from bin.attributes.BaseAttribute import BaseAttribute
 
+
 class PhoneNumber(BaseAttribute):
     def __init__(self, number, proof, country_context=None):
         super().__init__(proof)
@@ -31,13 +32,13 @@ class PhoneNumber(BaseAttribute):
         national_number = str(self.number.national_number)
 
         area_code_length = {
-            'US': 3, 'CA': 3, # North America
-            'GB': 3, 'FR': 2, 'DE': 3, 'IT': 2, # Europe
-            'AU': 1, 'JP': 2, 'KR': 2, # Asia-Pacific
-            'CN': 2, 'IN': 2, 'RU': 3, # Asia
-            'BR': 2, 'MX': 2, 'AR': 2, # Latin America
-            'ZA': 2, 'TR': 2, # Others
-            'SA': 2, # Middle East
+            'US': 3, 'CA': 3,  # North America
+            'GB': 3, 'FR': 2, 'DE': 3, 'IT': 2,  # Europe
+            'AU': 1, 'JP': 2, 'KR': 2,  # Asia-Pacific
+            'CN': 2, 'IN': 2, 'RU': 3,  # Asia
+            'BR': 2, 'MX': 2, 'AR': 2,  # Latin America
+            'ZA': 2, 'TR': 2,  # Others
+            'SA': 2,  # Middle East
             # Add more if needed
         }
 

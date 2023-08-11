@@ -1,6 +1,6 @@
-from bin.attributes.BaseAttribute import BaseAttribute
 from datetime import datetime
 
+from bin.attributes.BaseAttribute import BaseAttribute
 from bin.utils.date import convert_to_date
 
 
@@ -32,6 +32,3 @@ class DOB(BaseAttribute):
     @year.setter
     def year(self, value):
         self.DOB = datetime(value, self.DOB.month, self.DOB.day)
-
-
-

@@ -22,19 +22,19 @@ class TestEmail(unittest.TestCase):
         email_obj = Email("user@google.com", proof)
         self.assertEqual(email_obj.provider, "google")
 
-        email_obj = Email("user@company.co.uk",proof)
+        email_obj = Email("user@company.co.uk", proof)
         self.assertEqual(email_obj.provider, "company")
 
     def test_email_update(self):
         proof = Proof("Test Proof")
-        email_obj = Email("john.doe@example.com",proof)
+        email_obj = Email("john.doe@example.com", proof)
         email_obj.email = "user@yahoo.com"
         self.assertEqual(email_obj.email, "user@yahoo.com")
         self.assertEqual(email_obj.provider, "yahoo")
 
     def test_invalid_email_update(self):
         proof = Proof("Test Proof")
-        email_obj = Email("john.doe@example.com",proof)
+        email_obj = Email("john.doe@example.com", proof)
         with self.assertRaises(ValueError):
             email_obj.email = "invalid-email"
 

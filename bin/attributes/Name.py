@@ -1,6 +1,7 @@
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 
+
 class Name(BaseAttribute):
 
     def __init__(self, name: str = None, surname: str = None, proof: Proof = None, middlenames: str or list = None):

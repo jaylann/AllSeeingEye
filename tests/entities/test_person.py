@@ -1,12 +1,12 @@
 import unittest
+from datetime import datetime
 
+from bin.attributes.Address import Address
+from bin.attributes.DOB import DOB
+from bin.attributes.Name import Name
 from bin.attributes.PhoneNumber import PhoneNumber
 from bin.entities.Person import Person
 from bin.objects.Proof import Proof
-from datetime import datetime
-from bin.attributes.Name import Name
-from bin.attributes.Address import Address
-from bin.attributes.DOB import DOB
 
 
 class TestPersonIntegration(unittest.TestCase):
@@ -55,6 +55,7 @@ class TestPersonIntegration(unittest.TestCase):
         phone_number = PhoneNumber("+491771231231", proof="Proof not provided")  # German phone number
         self.person.phone_number = phone_number
         self.assertEqual(self.person.location, 'DE')
+
 
 if __name__ == "__main__":
     unittest.main()

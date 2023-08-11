@@ -1,4 +1,5 @@
 import unittest
+
 from bin.attributes.PhoneNumber import PhoneNumber
 from bin.objects.Proof import Proof
 

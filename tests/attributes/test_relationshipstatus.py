@@ -1,5 +1,5 @@
 import unittest
-from bin.attributes.BaseAttribute import BaseAttribute
+
 from bin.attributes.RelationshipStatus import RelationshipStatus
 from bin.objects.Proof import Proof
 

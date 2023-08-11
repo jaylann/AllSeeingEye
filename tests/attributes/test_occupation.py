@@ -1,7 +1,8 @@
 import unittest
+from datetime import datetime
+
 from bin.attributes.Occupation import Occupation
 from bin.objects.Proof import Proof
-from datetime import datetime
 
 
 class TestOccupation(unittest.TestCase):
@@ -10,7 +11,8 @@ class TestOccupation(unittest.TestCase):
         self.proof = Proof("Placeholder")  # You may need to pass the required arguments for the Proof object
         start_date = "2022-01-01"
         end_date = "2023-01-01"
-        self.occupation = Occupation("Software Engineer", "TechCorp", "Technology", 5, start_date, end_date, self.proof)
+        self.occupation = Occupation("Software Engineer", "TechCorp",
+                                     "Technology", 5, start_date, end_date, self.proof)
 
     def test_initialization(self):
         self.assertEqual(self.occupation.job_title, "Software Engineer")
@@ -36,7 +38,8 @@ class TestOccupation(unittest.TestCase):
         self.assertEqual(self.occupation.end_date, datetime(2021, 6, 1))
 
     def test_string_representation(self):
-        expected_str = "Software Engineer at TechCorp, Technology industry - 5 years of experience from 2022-01-01 00:00:00 to 2023-01-01 00:00:00"
+        expected_str = ("Software Engineer at TechCorp, Technology industry - 5 years of experience from 2022-01-01 "
+                        "00:00:00 to 2023-01-01 00:00:00")
         self.assertEqual(str(self.occupation), expected_str)
 
 

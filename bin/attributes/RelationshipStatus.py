@@ -1,6 +1,7 @@
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 
+
 class RelationshipStatus(BaseAttribute):
     VALID_STATUSES = [
         'Single', 'Married', 'Divorced', 'Widowed', 'Engaged',
@@ -19,7 +20,8 @@ class RelationshipStatus(BaseAttribute):
     @status.setter
     def status(self, value):
         if value not in RelationshipStatus.VALID_STATUSES:
-            raise ValueError(f"Invalid relationship status. Must be one of: {', '.join(RelationshipStatus.VALID_STATUSES)}")
+            raise ValueError(
+                f"Invalid relationship status. Must be one of: {', '.join(RelationshipStatus.VALID_STATUSES)}")
         self._status = value
 
     def __str__(self):

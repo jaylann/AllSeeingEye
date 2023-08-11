@@ -1,6 +1,7 @@
 import unittest
-from bin.attributes.BaseAttribute import BaseAttribute
+
 from bin.attributes.Address import Address  # Make sure to import your Address class properly
+
 
 class TestAddress(unittest.TestCase):
     def setUp(self):

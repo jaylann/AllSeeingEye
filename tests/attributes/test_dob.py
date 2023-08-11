@@ -1,6 +1,5 @@
 import unittest
-from datetime import datetime
-from bin.attributes.BaseAttribute import BaseAttribute
+
 from bin.attributes.DOB import DOB
 
 

@@ -2,7 +2,6 @@ from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 
 from bin.utils.date import convert_to_date
-from datetime import datetime
 
 
 class Occupation(BaseAttribute):

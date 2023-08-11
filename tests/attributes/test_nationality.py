@@ -1,4 +1,5 @@
 import unittest
+
 from bin.attributes.Nationality import Nationality
 from bin.objects.Proof import Proof
 
