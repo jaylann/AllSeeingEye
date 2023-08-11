@@ -3,11 +3,11 @@ from bin.objects.Proof import Proof
 
 
 class Name(BaseAttribute):
-    def __init__(self, name: str, surname: str, proof: Proof, middlenames: str or list = None):
+    def __init__(self, name: str = None, surname: str = None, proof: Proof = None, middlenames: str or list = None):
         super().__init__(proof)
-        self._name = name
-        self._surname = surname
-        self._middlenames = middlenames if middlenames else []
+        self._name = name.strip() if name else ''
+        self._surname = surname.strip() if surname else ''
+        self._middlenames = [name.strip() for name in middlenames] if middlenames else []
 
     @property
     def name(self):
@@ -15,7 +15,7 @@ class Name(BaseAttribute):
 
     @name.setter
     def name(self, value):
-        self._name = value.strip()
+        self._name = value.strip() if value else ''
 
     @property
     def surname(self):
@@ -23,7 +23,7 @@ class Name(BaseAttribute):
 
     @surname.setter
     def surname(self, value):
-        self._surname = value.strip()
+        self._surname = value.strip() if value else ''
 
     @property
     def middlenames(self):
@@ -32,6 +32,8 @@ class Name(BaseAttribute):
     @middlenames.setter
     def middlenames(self, value):
         if value:
+            if isinstance(value, str):
+                value = [value]
             self._middlenames = [name.strip() for name in value]
         else:
             self._middlenames = []
@@ -44,10 +46,10 @@ class Name(BaseAttribute):
 
     def initials(self):
         """Returns the initials of the name."""
-        initials = [self._name[0]]
+        initials = [self._name[0]] if self._name else []
         initials += [name[0] for name in self._middlenames]
-        initials.append(self._surname[0])
-        return ".".join(initials) + "."
+        initials.append(self._surname[0]) if self._surname else ''
+        return ".".join(initials) + "." if initials else ''
 
     def __str__(self):
         return self.full_name()
