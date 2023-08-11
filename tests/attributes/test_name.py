@@ -1,19 +1,22 @@
 import unittest
 from bin.attributes.Name import Name
+from bin.objects.Proof import Proof
 
 
 class TestName(unittest.TestCase):
 
     def test_initialization(self):
-        name = Name('John', 'Doe', 'ID Proof', ['Michael', 'David'])
+        proof = Proof('ID Proof')  # Example Proof object
+        name = Name('John', 'Doe', proof, ['Michael', 'David'])
         self.assertEqual(name.name, 'John')
         self.assertEqual(name.surname, 'Doe')
         self.assertEqual(name.middlenames, ['Michael', 'David'])
-        self.assertEqual(name.full_name(), 'John Michael David Doe')
-        self.assertEqual(name.initials(), 'J.M.D.D.')
+        self.assertEqual(name.full_name, 'John Michael David Doe')
+        self.assertEqual(name.initials, 'J.M.D.D.')
 
     def test_setters(self):
-        name = Name('John', 'Doe', 'ID Proof')
+        proof = Proof('ID Proof')  # Example Proof object
+        name = Name('John', 'Doe', proof)
         name.name = ' Jane '
         name.surname = ' Smith '
         name.middlenames = [' Alice ', ' Bob ']
@@ -22,9 +25,23 @@ class TestName(unittest.TestCase):
         self.assertEqual(name.middlenames, ['Alice', 'Bob'])
 
     def test_without_middlenames(self):
-        name = Name('John', 'Doe', 'ID Proof')
-        self.assertEqual(name.full_name(), 'John Doe')
-        self.assertEqual(name.initials(), 'J.D.')
+        proof = Proof('ID Proof')  # Example Proof object
+        name = Name('John', 'Doe', proof)
+        self.assertEqual(name.full_name, 'John Doe')
+        self.assertEqual(name.initials, 'J.D.')
+
+    def test_empty_initialization(self):
+        name = Name()
+        self.assertEqual(name.name, '')
+        self.assertEqual(name.surname, '')
+        self.assertEqual(name.middlenames, [])
+        self.assertEqual(name.full_name, ' ')
+        self.assertEqual(name.initials, '')
+
+    def test_middlenames_as_string(self):
+        proof = Proof('ID Proof')  # Example Proof object
+        name = Name('John', 'Doe', proof, 'Michael')
+        self.assertEqual(name.middlenames, ['Michael'])
 
 
 if __name__ == '__main__':

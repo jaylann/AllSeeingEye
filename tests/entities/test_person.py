@@ -33,8 +33,8 @@ class TestPersonIntegration(unittest.TestCase):
         self.assertEqual(self.person.age, expected_age)
 
     def test_name(self):
-        self.assertEqual(self.person.name.full_name(), "John William Doe")
-        self.assertEqual(self.person.name.initials(), "J.W.D.")
+        self.assertEqual(self.person.name.full_name, "John William Doe")
+        self.assertEqual(self.person.name.initials, "J.W.D.")
 
     def test_address(self):
         self.assertEqual(str(self.person.address), "123 Main St, New York, NY, USA - 10001")

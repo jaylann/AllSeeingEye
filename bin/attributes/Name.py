@@ -1,13 +1,14 @@
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 
-
 class Name(BaseAttribute):
+
     def __init__(self, name: str = None, surname: str = None, proof: Proof = None, middlenames: str or list = None):
         super().__init__(proof)
         self._name = name.strip() if name else ''
         self._surname = surname.strip() if surname else ''
-        self._middlenames = [name.strip() for name in middlenames] if middlenames else []
+        self._middlenames = [name.strip() for name in middlenames] if isinstance(middlenames, list) else [
+            middlenames.strip()] if middlenames else []
 
     @property
     def name(self):
@@ -38,12 +39,14 @@ class Name(BaseAttribute):
         else:
             self._middlenames = []
 
+    @property
     def full_name(self):
         """Returns the full name, including all middle names if present."""
         middle_names_str = " ".join(self._middlenames)
         return f"{self._name} {middle_names_str} {self._surname}" if self._middlenames \
             else f"{self._name} {self._surname}"
 
+    @property
     def initials(self):
         """Returns the initials of the name."""
         initials = [self._name[0]] if self._name else []
@@ -52,4 +55,4 @@ class Name(BaseAttribute):
         return ".".join(initials) + "." if initials else ''
 
     def __str__(self):
-        return self.full_name()
+        return self.full_name
