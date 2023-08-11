@@ -1,5 +1,4 @@
 import unittest
-from bin.attributes.BaseAttribute import BaseAttribute
 from bin.attributes.Gender import Gender
 from bin.objects.Proof import Proof
 
