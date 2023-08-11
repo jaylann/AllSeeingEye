@@ -1,8 +1,7 @@
 import unittest
-import phonenumbers
-
 from bin.attributes.PhoneNumber import PhoneNumber
 from bin.objects.Proof import Proof
+
 
 class TestPhoneNumber(unittest.TestCase):
 
@@ -34,7 +33,6 @@ class TestPhoneNumber(unittest.TestCase):
         with self.assertRaises(ValueError):
             PhoneNumber("+123 456-7890", proof)  # Non-existent country code
 
-
     # Add more specific tests for other G20 countries as needed
 
     def test_valid_german_number(self):
@@ -46,7 +44,7 @@ class TestPhoneNumber(unittest.TestCase):
 
     def test_local_number_with_context(self):
         proof = Proof("Phone")
-        phone = PhoneNumber("01771231231",proof, "DE")  # Parsing with Germany context
+        phone = PhoneNumber("01771231231", proof, "DE")  # Parsing with Germany context
         self.assertEqual(phone.country_code, 49)
         self.assertEqual(phone.local_number, "1771231231")
         self.assertEqual(phone.area_code, "177")
@@ -62,6 +60,7 @@ class TestPhoneNumber(unittest.TestCase):
         # This test may fail if short numbers are considered invalid
         with self.assertRaises(ValueError):
             PhoneNumber("12225", proof)
+
 
 if __name__ == "__main__":
     unittest.main()
