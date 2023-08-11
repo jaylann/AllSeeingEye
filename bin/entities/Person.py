@@ -30,7 +30,6 @@ class Person:
         self._occupation = occupation
         self._relationship_status = relationship_status
 
-
     # DOB
     @property
     def DOB(self):
