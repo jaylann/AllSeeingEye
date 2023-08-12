@@ -26,3 +26,9 @@ class RelationshipStatus(BaseAttribute):
 
     def __str__(self):
         return f"Relationship Status: {self.status}"
+
+    def __dict__(self):
+        return {
+            'status': self._status,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

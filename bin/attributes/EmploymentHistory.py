@@ -22,3 +22,9 @@ class EmploymentHistory:
 
     def __str__(self):
         return "\n".join(str(occupation) for occupation in self._occupations)
+
+    def __dict__(self):
+        return {
+            'occupations': [occupation.__dict__() if hasattr(occupation, '__dict__') else str(occupation) for occupation
+                            in self._occupations]
+        }

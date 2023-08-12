@@ -57,3 +57,11 @@ class Name(BaseAttribute):
 
     def __str__(self):
         return self.full_name
+
+    def __dict__(self):
+        return {
+            'name': self._name,
+            'surname': self._surname,
+            'middlenames': self._middlenames,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

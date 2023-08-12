@@ -1,4 +1,6 @@
 import phonenumbers
+from phonenumbers import PhoneNumberFormat
+
 from bin.attributes.BaseAttribute import BaseAttribute
 
 
@@ -43,3 +45,12 @@ class PhoneNumber(BaseAttribute):
         }
 
         return national_number[:area_code_length.get(country, 0)] if country in area_code_length else None
+
+    def __str__(self):
+        return phonenumbers.format_number(self.number, PhoneNumberFormat.E164)
+
+    def __dict__(self):
+        return {
+            'number': self.__str__(),
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

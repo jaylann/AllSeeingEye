@@ -75,3 +75,13 @@ class Address(BaseAttribute):
 
     def __str__(self):
         return f"{self.street or ''}, {self.city or ''}, {self.state or ''}, {self.country or ''} - {self.postal_code or ''}"
+
+    def __dict__(self):
+        return {
+            'street': self.street,
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'postal_code': self.postal_code,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

@@ -141,3 +141,19 @@ class Person:
         # Get the region code for the country code (e.g., 'US' for country code 1)
         region_code = region_code_for_country_code(country_code)
         return region_code
+
+    @property
+    def data(self):
+        return {
+            "DOB": self.DOB.__dict__() if self.DOB else None,
+            "name": self.name.__dict__() if self.name else None,
+            "address": self.address.__dict__() if self.address else None,
+            "phone_number": self.phone_number.__dict__() if self.phone_number else None,
+            "nationality": self.nationality.__dict__() if self.nationality else None,
+            "email": self.email.__dict__() if self.email else None,
+            "employment_history": self.employment_history.__dict__() if self.employment_history else None,
+            "gender": self.gender.__dict__() if self.gender else None,
+            "occupation": self.occupation.__dict__() if self.occupation else None,
+            "relationship_status": self.relationship_status.__dict__() if self.relationship_status else None
+        }
+

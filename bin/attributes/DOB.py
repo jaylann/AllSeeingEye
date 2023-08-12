@@ -32,3 +32,9 @@ class DOB(BaseAttribute):
     @year.setter
     def year(self, value):
         self.DOB = datetime(value, self.DOB.month, self.DOB.day)
+
+    def __dict__(self):
+        return {
+            'DOB': self.DOB,
+            'proof': [proof.__dict__() for proof in self.proof] # Assuming proof is defined in the BaseAttribute class
+        }

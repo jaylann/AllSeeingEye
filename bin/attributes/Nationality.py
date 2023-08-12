@@ -17,3 +17,9 @@ class Nationality(BaseAttribute):
 
     def __str__(self):
         return f"{self.country}"
+
+    def __dict__(self):
+        return {
+            'country': self._country,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

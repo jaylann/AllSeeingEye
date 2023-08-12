@@ -29,3 +29,9 @@ class Email(BaseAttribute):
 
     def __str__(self):
         return self.email
+
+    def __dict__(self):
+        return {
+            'email': self.email,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

@@ -19,3 +19,9 @@ class Gender(BaseAttribute):
 
     def __str__(self):
         return f"Gender: {self.gender}"
+
+    def __dict__(self):
+        return {
+            'gender': self.gender,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }

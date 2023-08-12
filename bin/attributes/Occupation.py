@@ -79,3 +79,14 @@ class Occupation(BaseAttribute):
     def __str__(self):
         return (f"{self.job_title} at {self.company_name}, {self.industry} industry - {self.years_experience} years of "
                 f"experience from {self.start_date} to {self.end_date}")
+
+    def __dict__(self):
+        return {
+            'job_title': self.job_title,
+            'company_name': self.company_name,
+            'industry': self.industry,
+            'years_experience': self.years_experience,
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+        }
