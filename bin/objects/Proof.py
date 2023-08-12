@@ -3,4 +3,4 @@ class Proof:
         self.reason = reason
 
     def __dict__(self):
-        return {"data": "placeholder"}
+        return {"reason": "placeholder"}

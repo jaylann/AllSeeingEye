@@ -11,7 +11,111 @@ from bin.attributes.Nationality import Nationality
 from bin.attributes.Occupation import Occupation
 from bin.attributes.RelationshipStatus import RelationshipStatus
 from bin.attributes.Gender import Gender
+from bin.objects.Proof import Proof
 
+
+def person_from_dict(person_dict):
+
+    # Extracting DOB
+    dob = DOB(
+        dob=person_dict['DOB']['DOB'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['DOB']['proof']]
+    )
+
+    # Extracting Name
+    name = Name(
+        name=person_dict['name']['name'],
+        surname=person_dict['name']['surname'],
+        middlenames=person_dict['name']['middlenames'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['name']['proof']]
+    )
+
+    # Extracting Address
+    address = Address(
+        street=person_dict['address']['street'],
+        city=person_dict['address']['city'],
+        state=person_dict['address']['state'],
+        country=person_dict['address']['country'],
+        postal_code=person_dict['address']['postal_code'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['address']['proof']]
+    )
+
+    # Extracting Phone Number
+    phone_number = PhoneNumber(
+        number=person_dict['phone_number']['number'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['phone_number']['proof']]
+    )
+
+    # Extracting Nationality
+    nationality = Nationality(
+        country=person_dict['nationality']['country'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['nationality']['proof']]
+    )
+
+    # Extracting Email
+    email = Email(
+        email=person_dict['email']['email'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['email']['proof']]
+    )
+
+    # Extracting Occupations
+    occupations = []
+    for occupation_data in person_dict['employment_history']['occupations']:
+        occupation = Occupation(
+            job_title=occupation_data['job_title'],
+            company_name=occupation_data['company_name'],
+            industry=occupation_data['industry'],
+            years_experience=occupation_data['years_experience'],
+            start_date=occupation_data['start_date'],
+            end_date=occupation_data['end_date'],
+            proof=[Proof(**proof_data) for proof_data in occupation_data['proof']]
+        )
+        occupations.append(occupation)
+
+    # Extracting Employment History
+    employment_history = EmploymentHistory(
+        occupations=occupations
+
+    )
+
+    # Extracting Gender
+    gender = Gender(
+        gender=person_dict['gender']['gender'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['gender']['proof']]
+    )
+
+    # Extracting Occupation
+    occupation = Occupation(
+        job_title=person_dict['occupation']['job_title'],
+        company_name=person_dict['occupation']['company_name'],
+        industry=person_dict['occupation']['industry'],
+        years_experience=person_dict['occupation']['years_experience'],
+        start_date=person_dict['occupation']['start_date'],
+        end_date=person_dict['occupation']['end_date'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['occupation']['proof']]
+    )
+
+    # Extracting Relationship Status
+    relationship_status = RelationshipStatus(
+        status=person_dict['relationship_status']['status'],
+        proof=[Proof(**proof_data) for proof_data in person_dict['relationship_status']['proof']]
+    )
+
+    # Constructing the Person object
+    person = Person(
+        dob=dob,
+        name=name,
+        address=address,
+        phone_number=phone_number,
+        nationality=nationality,
+        email=email,
+        employment_history=employment_history,
+        gender=gender,
+        occupation=occupation,
+        relationship_status=relationship_status
+    )
+
+    return person
 
 class Person:
     def __init__(self, dob: DOB = None, name: Name = None, address: Address = None, phone_number: PhoneNumber = None,
@@ -156,4 +260,3 @@ class Person:
             "occupation": self.occupation.__dict__() if self.occupation else None,
             "relationship_status": self.relationship_status.__dict__() if self.relationship_status else None
         }
-

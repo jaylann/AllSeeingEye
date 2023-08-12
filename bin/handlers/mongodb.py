@@ -12,6 +12,7 @@ from bin.attributes.PhoneNumber import PhoneNumber
 from bin.attributes.RelationshipStatus import RelationshipStatus
 from bin.entities.Person import Person
 from bin.objects.Proof import Proof
+from bin.entities.Person import person_from_dict
 
 proof = Proof("ID Card")  # Assuming Proof class is defined
 dob = DOB("15-08-1990", proof)
@@ -45,8 +46,34 @@ class AllSeeingEye:
         result = self.persons_collection.insert_one(person.data)
         return result.inserted_id
 
-    def get_person(self, person_id):
-        person = self.persons_collection.find_one({"_id": person_id})
+    def get_person(self, person_id=None, address=None, dob=None, email=None, employment_history=None, gender=None,
+                   name=None, nationality=None, occupation=None, phone_number=None, relationship_status=None):
+        query = {}
+        if person_id:
+            query["_id"] = {"$oid": person_id}
+        if address:
+            query["address"] = address.__dict__()
+        if dob:
+            query["DOB"] = dob.__dict__()
+        if email:
+            query["email"] = email.__dict__()
+        if employment_history:
+            query["employment_history"] = employment_history.__dict__()
+        if gender:
+            query["gender"] = gender.__dict__()
+        if name:
+            query["name"] = name.__dict__()
+        if nationality:
+            query["nationality"] = nationality.__dict__()
+        if occupation:
+            query["occupation"] = occupation.__dict__()
+        if phone_number:
+            query["phone_number"] = phone_number.__dict__()
+        if relationship_status:
+            query["relationship_status"] = relationship_status.__dict__()
+
+        psn = self.persons_collection.find_one(query)
+        person = person_from_dict(psn)
         return person
 
     def remove_person(self, person_id):
@@ -54,4 +81,4 @@ class AllSeeingEye:
         return result.deleted_count
 
 test = AllSeeingEye()
-print(test.add_person(person))
+print(test.get_person(Name=name_obj))

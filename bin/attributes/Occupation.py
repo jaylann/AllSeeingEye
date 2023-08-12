@@ -1,3 +1,5 @@
+import datetime
+
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 
@@ -22,7 +24,7 @@ class Occupation(BaseAttribute):
     @start_date.setter
     def start_date(self, value):
         if value is not None:
-            self._start_date = convert_to_date(value)  # Validate and convert to datetime
+            self._start_date = value if type(value) == datetime.datetime else convert_to_date(value)  # Validate and convert to datetime
         else:
             self._start_date = None
 
@@ -33,7 +35,7 @@ class Occupation(BaseAttribute):
     @end_date.setter
     def end_date(self, value):
         if value is not None:
-            self._end_date = convert_to_date(value)  # Validate and convert to datetime
+            self._end_date = value if type(value) == datetime.datetime else convert_to_date(value)  # Validate and convert to datetime
         else:
             self._end_date = None
 
