@@ -63,5 +63,5 @@ class Name(BaseAttribute):
             'name': self._name,
             'surname': self._surname,
             'middlenames': self._middlenames,
-            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+            'proof': [proof.__dict__() for proof in self.proof] if self.proof else None # Assuming proof is defined in the BaseAttribute class
         }

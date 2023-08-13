@@ -30,5 +30,5 @@ class RelationshipStatus(BaseAttribute):
     def __dict__(self):
         return {
             'status': self._status,
-            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+            'proof': [proof.__dict__() for proof in self.proof] if self.proof else None # Assuming proof is defined in the BaseAttribute class
         }

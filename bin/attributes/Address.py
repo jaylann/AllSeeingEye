@@ -83,5 +83,5 @@ class Address(BaseAttribute):
             'state': self.state,
             'country': self.country,
             'postal_code': self.postal_code,
-            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+            'proof': [proof.__dict__() for proof in self.proof] if self.proof else None  # Assuming proof is defined in the BaseAttribute class
         }

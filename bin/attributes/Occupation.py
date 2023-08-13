@@ -90,5 +90,5 @@ class Occupation(BaseAttribute):
             'years_experience': self.years_experience,
             'start_date': self.start_date,
             'end_date': self.end_date,
-            'proof': [proof.__dict__() for proof in self.proof]  # Assuming proof is defined in the BaseAttribute class
+            'proof': [proof.__dict__() for proof in self.proof] if self.proof else None # Assuming proof is defined in the BaseAttribute class
         }
