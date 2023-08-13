@@ -60,7 +60,7 @@ class Name(BaseAttribute):
         """Sets the middle names, accepting either a string or a list of strings."""
         # Ensure value is a list if it's a string
         if isinstance(value, str):
-            value = [value]
+            value = [value] if value.strip() else []  # Handle empty string
         self._middlenames = [name.strip() for name in value] if value else []
 
     @property
