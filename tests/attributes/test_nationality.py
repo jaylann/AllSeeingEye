@@ -20,7 +20,23 @@ class TestNationality(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.nationality), "United States")
 
-    # Additional tests can be added here if necessary
+    def test_initialization_without_proof(self):
+        nationality = Nationality(country="United States")
+        self.assertEqual(nationality.country, "United States")
+        self.assertIsNone(nationality.proof)
+
+    def test_dict_representation(self):
+        nationality = Nationality(country="United States", proof=self.proof)
+        expected_dict = {
+            'country': 'United States',
+            'proof': [self.proof.__dict__()]  # Assuming __dict__ method exists in Proof class
+        }
+        self.assertDictEqual(nationality.__dict__(), expected_dict)
+
+    def test_empty_country(self):
+        nationality = Nationality(country="", proof=self.proof)
+        self.assertEqual(nationality.country, "")
+
 
 
 if __name__ == '__main__':
