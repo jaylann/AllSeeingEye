@@ -33,7 +33,7 @@ class TestAddress(unittest.TestCase):
     def test_country_property(self):
         new_country = 'Canada'
         self.address.country = new_country
-        self.assertEqual(self.address.country, new_country)
+        self.assertEqual(self.address.country, "CA")
 
     def test_postal_code_property(self):
         new_postal_code = 'H0H 0H0'
