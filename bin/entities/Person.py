@@ -79,17 +79,17 @@ def person_from_dict(person_dict):
 
 class Person:
     def __init__(self, dob: DOB = None, name: Name = None, address: Address = None, phone_number: PhoneNumber = None,
-                 nationality: Nationality = None, email: Email = None, employment_history: EmploymentHistory = None,
-                 gender: Gender = None, occupation: Occupation = None,
+                 nationality: Nationality = None, email: Email = None,
+                 gender: Gender = None, employment_history:EmploymentHistory=None, occupation: Occupation = None,
                  relationship_status: RelationshipStatus = None):
         self._DOB = dob
         self._name = name
         self._phone_number = phone_number
         self._nationality = nationality
         self._email = email
-        self._employment_history = employment_history
         self._gender = gender
         self._occupation = occupation
+        self._employment_history = EmploymentHistory([self.occupation]) if not employment_history and self.occupation else employment_history
         self._relationship_status = relationship_status
         self._address = address if address else Address(country=self.estimate_location()) \
             if self._phone_number else None

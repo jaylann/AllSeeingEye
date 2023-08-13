@@ -33,7 +33,7 @@ class TestPersonIntegration(unittest.TestCase):
         relationship = RelationshipStatus("Divorced", proof=proof)
         gender = Gender("Male", proof=proof)
 
-        self.person = Person(dob, name_obj, addr, phone_number, nationality, email, employment_history, gender,
+        self.person = Person(dob, name_obj, addr, phone_number, nationality, email, gender, employment_history,
                              occupation, relationship)
 
     def test_dob(self):

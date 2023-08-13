@@ -19,15 +19,15 @@ dob = DOB("15-08-1990", proof)
 name = "John"
 surname = "Doe"
 middlenames = ["William"]
-name_obj = Name(name, surname, proof, middlenames)
-addr = Address("123 Main St", "New York", "NY", "USA", 10001, proof)
-phone_number = PhoneNumber("+1-202-555-0172", proof)
-email = Email("john.doe@example.com", proof)
-occupation = Occupation("Software Engineer", "Google", "Technology", 3, "23.08.2019", None, proof)
+name_obj = Name(name, surname, middlenames, proof=proof)
+addr = Address("123 Main St", "New York", "NY", "USA", 10001, proof=proof)
+phone_number = PhoneNumber("+1-202-555-0172", proof=proof)
+email = Email("john.doe@example.com", proof=proof)
+occupation = Occupation("Software Engineer", "Google", "Technology", 3, "23.08.2019", None, proof=proof)
 employment_history = EmploymentHistory([occupation])
-nationality = Nationality(addr.country, proof)
-relationship = RelationshipStatus("Divorced", proof)
-gender = Gender("Male", proof)
+nationality = Nationality(addr.country, proof=proof)
+relationship = RelationshipStatus("Divorced", proof=proof)
+gender = Gender("Male", proof=proof)
 
 person = Person(dob, name_obj, addr, phone_number, nationality, email, employment_history, gender,
                      occupation, relationship)
