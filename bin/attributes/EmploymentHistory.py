@@ -32,13 +32,14 @@ class EmploymentHistory:
 
     def add_occupation(self, occupation: Occupation):
         """
-        Adds an occupation to the list and sorts the list by start date.
+        Adds an occupation to the list and sorts the list by start date. Doesn't allow duplicate occupations
 
         Args:
             occupation (Occupation): The occupation to add.
         """
-        self._occupations.append(occupation)
-        self._occupations.sort(key=lambda x: x.start_date)
+        if occupation not in self._occupations:
+            self._occupations.append(occupation)
+            self._occupations.sort(key=lambda x: x.start_date)
 
     def remove_occupation(self, occupation: Occupation):
         """

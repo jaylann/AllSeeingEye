@@ -35,6 +35,26 @@ class TestEmploymentHistory(unittest.TestCase):
         expected_str = str(self.occupation2) + "\n" + str(self.occupation1)  # Sorted by start_date
         self.assertEqual(str(self.employment_history), expected_str)
 
+    def test_initialization_with_empty_list(self):
+        employment_history = EmploymentHistory([])
+        self.assertEqual(len(employment_history.occupations), 0)
+
+    def test_add_occupation_with_duplicate_entry(self):
+        self.employment_history.add_occupation(self.occupation1)
+        self.assertEqual(len(self.employment_history.occupations), 2)  # No duplicate should be added
+
+    def test_remove_non_existent_occupation(self):
+        proof = Proof("Placeholder")
+        non_existent_occupation = Occupation("Manager", "Corp", "Management", 2, "2018-01-01", "2019-01-01", proof)
+        with self.assertRaises(ValueError):
+            self.employment_history.remove_occupation(non_existent_occupation)
+
+    def test_dict_representation(self):
+        expected_dict = {
+            'occupations': [self.occupation2.__dict__(), self.occupation1.__dict__()]  # Adjust as needed
+        }
+        self.assertEqual(self.employment_history.__dict__(), expected_dict)
+
 
 if __name__ == "__main__":
     unittest.main()
