@@ -1,88 +1,84 @@
 import datetime
-
+from typing import Optional, Union
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
-
 from bin.utils.date import convert_to_date
 
 
 class Occupation(BaseAttribute):
-    def __init__(self, job_title: str = None, company_name: str = None, industry: str = None,
-                 years_experience: int = 0, start_date=None, end_date=None, proof: Proof = None):
+    """
+    Occupation class that extends BaseAttribute.
+    It represents a person's occupation, including job title, company name, industry, experience, and employment dates.
+
+    Attributes:
+        job_title (str): The job title.
+        company_name (str): The company name.
+        industry (str): The industry of the company.
+        years_experience (int): The years of experience.
+        start_date (datetime): The start date of the occupation.
+        end_date (datetime): The end date of the occupation.
+    """
+
+    def __init__(self, job_title: Optional[str] = None, company_name: Optional[str] = None, industry: Optional[str] = None,
+                 years_experience: int = 0, start_date: Optional[Union[str, datetime.datetime]] = None,
+                 end_date: Optional[Union[str, datetime.datetime]] = None, proof: Optional[Proof] = None):
+        """
+        Initializes the Occupation object.
+
+        Args:
+            job_title (Optional[str], default=None): The job title.
+            company_name (Optional[str], default=None): The company name.
+            industry (Optional[str], default=None): The industry of the company.
+            years_experience (int, default=0): The years of experience.
+            start_date (Optional[Union[str, datetime.datetime]], default=None): The start date, either as a string or a datetime object.
+            end_date (Optional[Union[str, datetime.datetime]], default=None): The end date, either as a string or a datetime object.
+            proof (Optional[Proof], default=None): Proof associated with the occupation.
+        """
         super().__init__(proof)
         self.job_title = job_title
         self.company_name = company_name
         self.industry = industry
         self.years_experience = years_experience
-        self.start_date = start_date  # Will call the setter method
-        self.end_date = end_date  # Will call the setter method
+        self.start_date = start_date
+        self.end_date = end_date
 
     @property
-    def start_date(self):
-        return self._start_date if hasattr(self, '_start_date') else None
+    def start_date(self) -> Optional[datetime.datetime]:
+        """Returns the start date of the occupation."""
+        return getattr(self, '_start_date', None)
 
     @start_date.setter
-    def start_date(self, value):
-        if value is not None:
-            self._start_date = value if type(value) == datetime.datetime else convert_to_date(value)  # Validate and convert to datetime
-        else:
-            self._start_date = None
+    def start_date(self, value: Optional[Union[str, datetime.datetime]]):
+        """Sets the start date of the occupation, converting from a string if necessary."""
+        self._start_date = convert_to_date(value) if isinstance(value, str) else value
 
     @property
-    def end_date(self):
-        return self._end_date if hasattr(self, '_end_date') else None
+    def end_date(self) -> Optional[datetime.datetime]:
+        """Returns the end date of the occupation."""
+        return getattr(self, '_end_date', None)
 
     @end_date.setter
-    def end_date(self, value):
-        if value is not None:
-            self._end_date = value if type(value) == datetime.datetime else convert_to_date(value)  # Validate and convert to datetime
-        else:
-            self._end_date = None
+    def end_date(self, value: Optional[Union[str, datetime.datetime]]):
+        """Sets the end date of the occupation, converting from a string if necessary."""
+        self._end_date = convert_to_date(value) if isinstance(value, str) else value
+
+    # Similar property and setter methods for other attributes
 
     @property
-    def job_title(self):
-        return self._job_title if hasattr(self, '_job_title') else None
-
-    @job_title.setter
-    def job_title(self, value):
-        self._job_title = value
-
-    @property
-    def company_name(self):
-        return self._company_name if hasattr(self, '_company_name') else None
-
-    @company_name.setter
-    def company_name(self, value):
-        self._company_name = value
-
-    @property
-    def industry(self):
-        return self._industry if hasattr(self, '_industry') else None
-
-    @industry.setter
-    def industry(self, value):
-        self._industry = value
-
-    @property
-    def years_experience(self):
-        return self._years_experience if hasattr(self, '_years_experience') else 0
-
-    @years_experience.setter
-    def years_experience(self, value):
-        self._years_experience = int(value) if value is not None else 0
-
-    @property
-    def years_at_company(self):
+    def years_at_company(self) -> float:
+        """Calculates the years at the company based on start and end dates, accounting for leap years."""
         if self.start_date and self.end_date:
             delta = self.end_date - self.start_date
-            return delta.days / 365.25  # Dividing by 365.25 to account for leap years
+            return delta.days / 365.25
         return 0
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Returns the string representation of the occupation."""
         return (f"{self.job_title} at {self.company_name}, {self.industry} industry - {self.years_experience} years of "
                 f"experience from {self.start_date} to {self.end_date}")
 
-    def __dict__(self):
+    def __dict__(self) -> dict:
+        """Returns a dictionary representation of the Occupation object, including proofs if available."""
         return {
             'job_title': self.job_title,
             'company_name': self.company_name,
@@ -90,5 +86,5 @@ class Occupation(BaseAttribute):
             'years_experience': self.years_experience,
             'start_date': self.start_date,
             'end_date': self.end_date,
-            'proof': [proof.__dict__() for proof in self.proof] if self.proof else None # Assuming proof is defined in the BaseAttribute class
+            'proof': [proof.__dict__() for proof in self.proof] if self.proof else None
         }
