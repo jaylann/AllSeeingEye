@@ -19,7 +19,7 @@ dob = DOB("15-08-1990", proof)
 name = "John"
 surname = "Doe"
 middlenames = ["William"]
-name_obj = Name(name, surname, middlenames, proof=proof)
+name_obj = Name(name="Justin", surname="Lanfermann")
 addr = Address("123 Main St", "New York", "NY", "USA", 10001, proof=proof)
 phone_number = PhoneNumber("+1-202-555-0172", proof=proof)
 email = Email("john.doe@example.com", proof=proof)
@@ -29,7 +29,7 @@ nationality = Nationality(addr.country, proof=proof)
 relationship = RelationshipStatus("Divorced", proof=proof)
 gender = Gender("Male", proof=proof)
 
-person = Person(dob, name_obj, addr, phone_number, nationality, email, employment_history, gender,
+person = Person(dob, name_obj, addr, phone_number, nationality, email, gender,employment_history,
                      occupation, relationship)
 
 
@@ -46,39 +46,67 @@ class AllSeeingEye:
         result = self.persons_collection.insert_one(person.data)
         return result.inserted_id
 
-    def get_person(self, person_id=None, address=None, dob=None, email=None, employment_history=None, gender=None,
-                   name=None, nationality=None, occupation=None, phone_number=None, relationship_status=None):
+    def get_persons(self, person_id=None, DOB=None, name=None, address=None, phone_number=None, nationality=None,
+                    email=None, employment_history=None, gender=None, occupation=None, relationship_status=None):
         query = {}
         if person_id:
             query["_id"] = {"$oid": person_id}
-        if address:
-            query["address"] = address.__dict__()
-        if dob:
-            query["DOB"] = dob.__dict__()
-        if email:
-            query["email"] = email.__dict__()
-        if employment_history:
-            query["employment_history"] = employment_history.__dict__()
-        if gender:
-            query["gender"] = gender.__dict__()
-        if name:
-            query["name"] = name.__dict__()
-        if nationality:
-            query["nationality"] = nationality.__dict__()
-        if occupation:
-            query["occupation"] = occupation.__dict__()
-        if phone_number:
-            query["phone_number"] = phone_number.__dict__()
-        if relationship_status:
-            query["relationship_status"] = relationship_status.__dict__()
 
-        psn = self.persons_collection.find_one(query)
-        person = person_from_dict(psn)
-        return person
+        if DOB:
+            for key, value in DOB.__dict__().items():
+                if value:
+                    query[f"DOB.{key}"] = value
+
+        if name:
+            for key, value in name.__dict__().items():
+                if value:
+                    query[f"name.{key}"] = value
+
+        if address:
+            for key, value in address.__dict__().items():
+                if value:
+                    query[f"address.{key}"] = value
+
+        if phone_number:
+            for key, value in phone_number.__dict__().items():
+                if value:
+                    query[f"phone_number.{key}"] = value
+
+        if nationality:
+            for key, value in nationality.__dict__().items():
+                if value:
+                    query[f"nationality.{key}"] = value
+
+        if email:
+            for key, value in email.__dict__().items():
+                if value:
+                    query[f"email.{key}"] = value
+
+        if employment_history:
+            pass
+        # Handle employment_history fields as needed
+        # (May require special handling if employment_history is a list)
+
+        if gender:
+            for key, value in gender.__dict__().items():
+                if value:
+                    query[f"gender.{key}"] = value
+
+        if occupation:
+            for key, value in occupation.__dict__().items():
+                if value:
+                    query[f"occupation.{key}"] = value
+
+        if relationship_status:
+            for key, value in relationship_status.__dict__().items():
+                if value:
+                    query[f"relationship_status.{key}"] = value
+        query_result = self.persons_collection.find(query)
+        return [person_from_dict(person) for person in query_result]
 
     def remove_person(self, person_id):
         result = self.persons_collection.delete_one({"_id": person_id})
         return result.deleted_count
 
 test = AllSeeingEye()
-print(test.get_person(name=name_obj))
+print(test.get_persons(name=name_obj))

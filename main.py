@@ -6,13 +6,14 @@ from bin.handlers.mongodb import AllSeeingEye
 database = AllSeeingEye()
 person_group = get_person_group(database)
 
+
 @click.group()
 def cli():
     """Main command group for managing persons and records."""
     pass
 
-cli.add_command(person_group)
 
+cli.add_command(person_group)
 
 
 @click.group()

@@ -18,7 +18,6 @@ def person_from_dict(person_dict):
 
     def create_proof(proof_data):
         return [Proof(**data) for data in proof_data] if proof_data else None
-
     # Extracting DOB
     dob_data = person_dict['DOB']
     dob = DOB(dob=dob_data['DOB'], proof=create_proof(dob_data['proof'])) if dob_data else None

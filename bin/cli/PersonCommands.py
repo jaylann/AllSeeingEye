@@ -79,14 +79,55 @@ class PersonCommands:
         """Remove a person by ID."""
         click.echo(f"Removing person with ID: {uid}")
 
+    def get(self, address: bool, dob: bool, email: bool, gender: bool, name: bool, nationality: bool, occupation: bool,
+            phone_number: bool, relationship_status: bool):
+        """Get a person with optional attributes."""
+        attribute_mapping = {
+            'address': (address, Address),
+            'dob': (dob, DOB),
+            'email': (email, Email),
+            'gender': (gender, Gender),
+            'name': (name, Name),
+            'nationality': (nationality, Nationality),
+            'occupation': (occupation, Occupation),
+            'phone_number': (phone_number, PhoneNumber),
+            'relationship_status': (relationship_status, RelationshipStatus),
+        }
+
+        attributes_obj = {
+            attribute: cls(**self.get_attribute_input(attribute))
+            for attribute, (flag, cls) in attribute_mapping.items() if flag
+        }
+
+        persons = self.database.get_persons(**attributes_obj)
+        for person in persons:
+            #Implement functioning print statment
+            click.echo(f"Person details: {person}")
+
 
 def get_person_group(database):
     person_commands = PersonCommands(database)
 
     @click.group()
     def person():
-        """Commands related to persons."""
         pass
+
+    @person.command()
+    @click.option('--address', is_flag=True, help='Address of the person.')
+    @click.option('--dob', is_flag=True, help='Date of birth of the person.')
+    @click.option('--email', is_flag=True, help='Email of the person.')
+    @click.option('--gender', is_flag=True, help='Gender of the person.')
+    @click.option('--name', is_flag=True, help='Name of the person.')
+    @click.option('--nationality', is_flag=True, help='Nationality of the person.')
+    @click.option('--occupation', is_flag=True, help='Occupation of the person.')
+    @click.option('--phone-number', is_flag=True, help='Phone number of the person.')
+    @click.option('--relationship-status', is_flag=True, help='Relationship status of the person.')
+    def get(address: bool, dob: bool, email: bool, gender: bool, name: bool, nationality: bool, occupation: bool,
+            phone_number: bool, relationship_status: bool):
+        """Get a person with optional attributes."""
+        person_commands.get(address, dob, email, gender, name, nationality, occupation, phone_number,
+                            relationship_status)
+
 
     @person.command()
     @click.option('--address', is_flag=True, help='Address of the person.')
@@ -110,6 +151,5 @@ def get_person_group(database):
         """Remove a person by ID."""
         person_commands.remove(id)
 
-    # ... other person-related commands and groups ...
 
     return person
