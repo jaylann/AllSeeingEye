@@ -5,7 +5,7 @@ from bin.utils.date import convert_to_date
 
 
 class DOB(BaseAttribute):
-    def __init__(self, dob: str or datetime, proof):
+    def __init__(self, dob: str or datetime, proof=None):
         super().__init__(proof)
         self.DOB = convert_to_date(dob) if type(dob) == str else dob
 

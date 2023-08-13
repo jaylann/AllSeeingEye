@@ -3,7 +3,7 @@ from bin.objects.Proof import Proof
 
 
 class Nationality(BaseAttribute):
-    def __init__(self, country: str, proof: Proof):
+    def __init__(self, country: str, proof: Proof = None):
         super().__init__(proof)
         self.country = country
 

@@ -5,7 +5,7 @@ from bin.attributes.BaseAttribute import BaseAttribute
 
 
 class PhoneNumber(BaseAttribute):
-    def __init__(self, number, proof, country_context=None):
+    def __init__(self, number, country_context=None, proof=None):
         super().__init__(proof)
         self.number = self.validate_number(number, country_context)
 

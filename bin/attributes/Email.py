@@ -4,7 +4,7 @@ from bin.attributes.BaseAttribute import BaseAttribute
 
 
 class Email(BaseAttribute):
-    def __init__(self, email: str, proof):
+    def __init__(self, email: str, proof=None):
         super().__init__(proof)
         self.email = email
 

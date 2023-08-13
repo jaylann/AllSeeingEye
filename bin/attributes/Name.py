@@ -4,7 +4,7 @@ from bin.objects.Proof import Proof
 
 class Name(BaseAttribute):
 
-    def __init__(self, name: str = None, surname: str = None, proof: Proof = None, middlenames: str or list = None):
+    def __init__(self, name: str = None, surname: str = None, middlenames: str or list = None, proof: Proof = None):
         super().__init__(proof)
         self._name = name.strip() if name else ''
         self._surname = surname.strip() if surname else ''

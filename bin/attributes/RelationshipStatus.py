@@ -9,7 +9,7 @@ class RelationshipStatus(BaseAttribute):
         'Friends with Benefits', 'Casually Dating', 'Open Relationship'
     ]
 
-    def __init__(self, status: str, proof: Proof):
+    def __init__(self, status: str, proof: Proof = None):
         super().__init__(proof)
         self.status = status
 

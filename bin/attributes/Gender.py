@@ -3,7 +3,7 @@ from bin.objects.Proof import Proof
 
 
 class Gender(BaseAttribute):
-    def __init__(self, gender: str, proof: Proof):
+    def __init__(self, gender: str, proof: Proof=None):
         super().__init__(proof)
         self.gender = gender
 

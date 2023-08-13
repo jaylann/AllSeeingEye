@@ -8,7 +8,7 @@ class TestName(unittest.TestCase):
 
     def test_initialization(self):
         proof = Proof('ID Proof')  # Example Proof object
-        name = Name('John', 'Doe', proof, ['Michael', 'David'])
+        name = Name('John', 'Doe', ['Michael', 'David'], proof)
         self.assertEqual(name.name, 'John')
         self.assertEqual(name.surname, 'Doe')
         self.assertEqual(name.middlenames, ['Michael', 'David'])
@@ -17,7 +17,7 @@ class TestName(unittest.TestCase):
 
     def test_setters(self):
         proof = Proof('ID Proof')  # Example Proof object
-        name = Name('John', 'Doe', proof)
+        name = Name('John', 'Doe', proof=proof)
         name.name = ' Jane '
         name.surname = ' Smith '
         name.middlenames = [' Alice ', ' Bob ']
@@ -27,7 +27,7 @@ class TestName(unittest.TestCase):
 
     def test_without_middlenames(self):
         proof = Proof('ID Proof')  # Example Proof object
-        name = Name('John', 'Doe', proof)
+        name = Name('John', 'Doe', proof=proof)
         self.assertEqual(name.full_name, 'John Doe')
         self.assertEqual(name.initials, 'J.D.')
 
@@ -41,7 +41,7 @@ class TestName(unittest.TestCase):
 
     def test_middlenames_as_string(self):
         proof = Proof('ID Proof')  # Example Proof object
-        name = Name('John', 'Doe', proof, 'Michael')
+        name = Name('John', 'Doe', 'Michael',proof)
         self.assertEqual(name.middlenames, ['Michael'])
 
 

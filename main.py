@@ -1,5 +1,10 @@
 import click
 
+from bin.attributes.DOB import DOB
+from bin.entities.Person import Person
+from bin.handlers.mongodb import AllSeeingEye
+database = AllSeeingEye()
+
 @click.group()
 def cli():
     """Main command group for managing persons and records."""
@@ -13,20 +18,23 @@ def person():
 cli.add_command(person)
 
 @person.command()
-@click.option('--address', default='', help='Address of the person.')
-@click.option('--dob', default='', help='Date of birth of the person.')
-@click.option('--email', default='', help='Email of the person.')
-@click.option('--employment-history', default='', help='Employment history of the person.')
-@click.option('--gender', default='', help='Gender of the person.')
-@click.option('--name', default='', help='Name of the person.')
-@click.option('--nationality', default='', help='Nationality of the person.')
-@click.option('--occupation', default='', help='Occupation of the person.')
-@click.option('--phone-number', default='', help='Phone number of the person.')
-@click.option('--relationship-status', default='', help='Relationship status of the person.')
+@click.option('--address', default=None, help='Address of the person.')
+@click.option('--dob', default=None, help='Date of birth of the person.')
+@click.option('--email', default=None, help='Email of the person.')
+@click.option('--employment-history', default=None, help='Employment history of the person.')
+@click.option('--gender', default=None, help='Gender of the person.')
+@click.option('--name', default=None, help='Name of the person.')
+@click.option('--nationality', default=None, help='Nationality of the person.')
+@click.option('--occupation', default=None, help='Occupation of the person.')
+@click.option('--phone-number', default=None, help='Phone number of the person.')
+@click.option('--relationship-status', default=None, help='Relationship status of the person.')
 def add(address, dob, email, employment_history, gender, name, nationality, occupation, phone_number, relationship_status):
     """Add a new person with optional attributes."""
     # Process the attributes here
+    dob = DOB()
+    uid = database.add_person(Person(dob, name, address, phone_number, nationality, email, employment_history, gender, occupation, relationship_status))
     click.echo(f"Adding person with Name: {name}, Address: {address}, DOB: {dob}, Email: {email}, Employment History: {employment_history}, Gender: {gender}, Nationality: {nationality}, Occupation: {occupation}, Phone Number: {phone_number}, Relationship Status: {relationship_status}")
+    click.echo(f"Person Unique ID: {uid}")
 
 @person.command()
 @click.argument('id', type=str, required=True)
