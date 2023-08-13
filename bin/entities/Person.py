@@ -16,90 +16,49 @@ from bin.objects.Proof import Proof
 
 def person_from_dict(person_dict):
 
+    def create_proof(proof_data):
+        return [Proof(**data) for data in proof_data] if proof_data else None
+
     # Extracting DOB
-    dob = DOB(
-        dob=person_dict['DOB']['DOB'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['DOB']['proof']]
-    )
+    dob_data = person_dict['DOB']
+    dob = DOB(dob=dob_data['DOB'], proof=create_proof(dob_data['proof'])) if dob_data else None
 
     # Extracting Name
-    name = Name(
-        name=person_dict['name']['name'],
-        surname=person_dict['name']['surname'],
-        middlenames=person_dict['name']['middlenames'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['name']['proof']]
-    )
+    name_data = person_dict['name']
+    name = Name(name=name_data['name'], surname=name_data['surname'], middlenames=name_data['middlenames'], proof=create_proof(name_data['proof'])) if name_data else None
 
     # Extracting Address
-    address = Address(
-        street=person_dict['address']['street'],
-        city=person_dict['address']['city'],
-        state=person_dict['address']['state'],
-        country=person_dict['address']['country'],
-        postal_code=person_dict['address']['postal_code'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['address']['proof']]
-    )
+    address_data = person_dict['address']
+    address = Address(street=address_data['street'], city=address_data['city'], state=address_data['state'], country=address_data['country'], postal_code=address_data['postal_code'], proof=create_proof(address_data['proof'])) if address_data else None
 
     # Extracting Phone Number
-    phone_number = PhoneNumber(
-        number=person_dict['phone_number']['number'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['phone_number']['proof']]
-    )
+    phone_number_data = person_dict['phone_number']
+    phone_number = PhoneNumber(number=phone_number_data['number'], proof=create_proof(phone_number_data['proof'])) if phone_number_data else None
 
     # Extracting Nationality
-    nationality = Nationality(
-        country=person_dict['nationality']['country'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['nationality']['proof']]
-    )
+    nationality_data = person_dict['nationality']
+    nationality = Nationality(country=nationality_data['country'], proof=create_proof(nationality_data['proof'])) if nationality_data else None
 
     # Extracting Email
-    email = Email(
-        email=person_dict['email']['email'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['email']['proof']]
-    )
+    email_data = person_dict['email']
+    email = Email(email=email_data['email'], proof=create_proof(email_data['proof'])) if email_data else None
 
-    # Extracting Occupations
-    occupations = []
-    for occupation_data in person_dict['employment_history']['occupations']:
-        occupation = Occupation(
-            job_title=occupation_data['job_title'],
-            company_name=occupation_data['company_name'],
-            industry=occupation_data['industry'],
-            years_experience=occupation_data['years_experience'],
-            start_date=occupation_data['start_date'],
-            end_date=occupation_data['end_date'],
-            proof=[Proof(**proof_data) for proof_data in occupation_data['proof']]
-        )
-        occupations.append(occupation)
-
-    # Extracting Employment History
-    employment_history = EmploymentHistory(
-        occupations=occupations
-
-    )
+    # Extracting Occupations and Employment History
+    employment_history_data = person_dict['employment_history']
+    occupations = [Occupation(job_title=occ['job_title'], company_name=occ['company_name'], industry=occ['industry'], years_experience=occ['years_experience'], start_date=occ['start_date'], end_date=occ['end_date'], proof=create_proof(occ['proof'])) for occ in employment_history_data['occupations']] if employment_history_data else []
+    employment_history = EmploymentHistory(occupations=occupations) if employment_history_data else None
 
     # Extracting Gender
-    gender = Gender(
-        gender=person_dict['gender']['gender'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['gender']['proof']]
-    )
+    gender_data = person_dict['gender']
+    gender = Gender(gender=gender_data['gender'], proof=create_proof(gender_data['proof'])) if gender_data else None
 
     # Extracting Occupation
-    occupation = Occupation(
-        job_title=person_dict['occupation']['job_title'],
-        company_name=person_dict['occupation']['company_name'],
-        industry=person_dict['occupation']['industry'],
-        years_experience=person_dict['occupation']['years_experience'],
-        start_date=person_dict['occupation']['start_date'],
-        end_date=person_dict['occupation']['end_date'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['occupation']['proof']]
-    )
+    occupation_data = person_dict['occupation']
+    occupation = Occupation(job_title=occupation_data['job_title'], company_name=occupation_data['company_name'], industry=occupation_data['industry'], years_experience=occupation_data['years_experience'], start_date=occupation_data['start_date'], end_date=occupation_data['end_date'], proof=create_proof(occupation_data['proof'])) if occupation_data else None
 
     # Extracting Relationship Status
-    relationship_status = RelationshipStatus(
-        status=person_dict['relationship_status']['status'],
-        proof=[Proof(**proof_data) for proof_data in person_dict['relationship_status']['proof']]
-    )
+    relationship_status_data = person_dict['relationship_status']
+    relationship_status = RelationshipStatus(status=relationship_status_data['status'], proof=create_proof(relationship_status_data['proof'])) if relationship_status_data else None
 
     # Constructing the Person object
     person = Person(
@@ -117,6 +76,7 @@ def person_from_dict(person_dict):
 
     return person
 
+
 class Person:
     def __init__(self, dob: DOB = None, name: Name = None, address: Address = None, phone_number: PhoneNumber = None,
                  nationality: Nationality = None, email: Email = None, employment_history: EmploymentHistory = None,
@@ -124,8 +84,6 @@ class Person:
                  relationship_status: RelationshipStatus = None):
         self._DOB = dob
         self._name = name
-        self._address = address if address else Address(country=self.estimate_location()) \
-            if self._phone_number else None
         self._phone_number = phone_number
         self._nationality = nationality
         self._email = email
@@ -133,6 +91,8 @@ class Person:
         self._gender = gender
         self._occupation = occupation
         self._relationship_status = relationship_status
+        self._address = address if address else Address(country=self.estimate_location()) \
+            if self._phone_number else None
 
     # DOB
     @property
