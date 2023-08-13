@@ -81,4 +81,4 @@ class AllSeeingEye:
         return result.deleted_count
 
 test = AllSeeingEye()
-print(test.get_person(Name=name_obj))
+print(test.get_person(name=name_obj))
