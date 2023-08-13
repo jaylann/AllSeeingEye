@@ -30,10 +30,17 @@ class TestRelationshipStatus(unittest.TestCase):
         status = RelationshipStatus('Single')
         self.assertEqual(status.status, 'Single')
 
-    def test_case_sensitivity(self):
-        # This test assumes that the status is case-sensitive. If it is not, the test should be adjusted accordingly.
-        with self.assertRaises(ValueError):
-            RelationshipStatus('single', self.proof)
+    def test_case_insensitivity(self):
+        # Testing with different capitalizations
+        status1 = RelationshipStatus('single', self.proof)
+        self.assertEqual(status1.status, 'Single')
+
+        status2 = RelationshipStatus('In A RELATIONSHIP', self.proof)
+        self.assertEqual(status2.status, 'In a Relationship')
+
+        status3 = RelationshipStatus('DiVorced', self.proof)
+        self.assertEqual(status3.status, 'Divorced')
+
 
     def test_dictionary_representation(self):
         status = RelationshipStatus('Married', self.proof)

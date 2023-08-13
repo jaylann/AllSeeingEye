@@ -49,10 +49,12 @@ class RelationshipStatus(BaseAttribute):
         Raises:
             ValueError: If the provided relationship status is not valid.
         """
-        if value not in RelationshipStatus.VALID_STATUSES:
+        # Convert the value to the correct capitalization if it is in the list of valid statuses
+        matching_status = next((s for s in RelationshipStatus.VALID_STATUSES if s.lower() == value.lower()), None)
+        if matching_status is None:
             raise ValueError(
                 f"Invalid relationship status. Must be one of: {', '.join(RelationshipStatus.VALID_STATUSES)}")
-        self._status = value
+        self._status = matching_status
 
     def __str__(self) -> str:
         """Returns the string representation of the relationship status."""
