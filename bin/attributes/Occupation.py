@@ -3,6 +3,7 @@ from typing import Optional, Union
 from bin.attributes.BaseAttribute import BaseAttribute
 from bin.objects.Proof import Proof
 from bin.utils.date import convert_to_date
+from dateutil.relativedelta import relativedelta
 
 
 class Occupation(BaseAttribute):
@@ -19,7 +20,8 @@ class Occupation(BaseAttribute):
         end_date (datetime): The end date of the occupation.
     """
 
-    def __init__(self, job_title: Optional[str] = None, company_name: Optional[str] = None, industry: Optional[str] = None,
+    def __init__(self, job_title: Optional[str] = None, company_name: Optional[str] = None,
+                 industry: Optional[str] = None,
                  years_experience: int = 0, start_date: Optional[Union[str, datetime.datetime]] = None,
                  end_date: Optional[Union[str, datetime.datetime]] = None, proof: Optional[Proof] = None):
         """
@@ -49,8 +51,19 @@ class Occupation(BaseAttribute):
 
     @start_date.setter
     def start_date(self, value: Optional[Union[str, datetime.datetime]]):
-        """Sets the start date of the occupation, converting from a string if necessary."""
-        self._start_date = convert_to_date(value) if isinstance(value, str) else value
+        """
+        Sets the start date of the occupation, converting from a string if necessary.
+
+        Args:
+            value (Optional[Union[str, datetime.datetime]]): The start date.
+
+        Raises:
+            ValueError: If the start date is after the end date.
+        """
+        value = convert_to_date(value) if isinstance(value, str) else value
+        if value and self.end_date and value > self.end_date:
+            raise ValueError("Start date cannot be after end date.")
+        self._start_date = value
 
     @property
     def end_date(self) -> Optional[datetime.datetime]:
@@ -59,17 +72,26 @@ class Occupation(BaseAttribute):
 
     @end_date.setter
     def end_date(self, value: Optional[Union[str, datetime.datetime]]):
-        """Sets the end date of the occupation, converting from a string if necessary."""
-        self._end_date = convert_to_date(value) if isinstance(value, str) else value
+        """
+        Sets the end date of the occupation, converting from a string if necessary.
 
-    # Similar property and setter methods for other attributes
+        Args:
+            value (Optional[Union[str, datetime.datetime]]): The end date.
+
+        Raises:
+            ValueError: If the end date is before the start date.
+        """
+        value = convert_to_date(value) if isinstance(value, str) else value
+        if value and self.start_date and value < self.start_date:
+            raise ValueError("End date cannot be before start date.")
+        self._end_date = value
 
     @property
     def years_at_company(self) -> float:
         """Calculates the years at the company based on start and end dates, accounting for leap years."""
         if self.start_date and self.end_date:
-            delta = self.end_date - self.start_date
-            return delta.days / 365.25
+            delta = relativedelta(self.end_date, self.start_date)
+            return delta.years + delta.months / 12 + delta.days / 365.25
         return 0
 
     def __str__(self) -> str:
