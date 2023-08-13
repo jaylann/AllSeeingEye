@@ -62,6 +62,30 @@ class TestPhoneNumber(unittest.TestCase):
         with self.assertRaises(ValueError):
             PhoneNumber("12225", proof=proof)
 
+    def test_number_without_area_code_mapping(self):
+        proof = Proof("Phone")
+        phone = PhoneNumber("+65 6123-4567", proof=proof)  # Example of a valid Singapore (SG) number
+        self.assertIsNone(phone.area_code)  # No area code mapping for Singapore
+
+    def test_number_with_special_characters(self):
+        proof = Proof("Phone")
+        phone = PhoneNumber("+1 (650)-555-1234 ext. 5678", proof=proof)
+        self.assertEqual(phone.country_code, 1)
+        self.assertEqual(phone.local_number, "6505551234")
+        self.assertEqual(phone.area_code, "650")
+
+    def test_empty_number(self):
+        proof = Proof("Phone")
+        with self.assertRaises(ValueError):
+            PhoneNumber("", proof=proof)
+
+    def test_number_with_extension(self):
+        proof = Proof("Phone")
+        phone = PhoneNumber("+1-650-555-1234 ext. 5678", proof=proof)
+        self.assertEqual(phone.country_code, 1)
+        self.assertEqual(phone.local_number, "6505551234")
+        self.assertEqual(phone.area_code, "650")
+
 
 if __name__ == "__main__":
     unittest.main()
