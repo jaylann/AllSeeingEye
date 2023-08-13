@@ -36,7 +36,7 @@ class TestName(unittest.TestCase):
         self.assertEqual(name.name, '')
         self.assertEqual(name.surname, '')
         self.assertEqual(name.middlenames, [])
-        self.assertEqual(name.full_name, ' ')
+        self.assertEqual(name.full_name, '')
         self.assertEqual(name.initials, '')
 
     def test_middlenames_as_string(self):
