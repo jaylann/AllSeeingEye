@@ -47,7 +47,7 @@ class TestPersonFromDict(unittest.TestCase):
             'occupation': None, 'relationship_status': None, "nationality": None
         }
         with self.assertRaises(Exception):
-            person = person_from_dict(person_dict)
+            person_from_dict(person_dict)
             self.fail("Test failed: Incorrect fields")  # Should raise an exception
 
 
