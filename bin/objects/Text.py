@@ -5,11 +5,22 @@ from bin.objects.Metadata import Metadata
 
 
 class Text(BaseObject):
-    def __init__(self, text, annotations=None, metadata=None):
+    def __init__(self, text, annotations=None, metadata=None, summary=None, associations=None, references=None):
         super().__init__()
         self._text = text
         self._annotations = annotations if annotations else []
         self._metadata = metadata
+        self._summary = summary
+        self._associations = associations
+        self._references = references
+
+    @property
+    def summary(self):
+        return self._summary
+
+    @summary.setter
+    def summary(self, value):
+        self._summary = value
 
     @property
     def text(self):
