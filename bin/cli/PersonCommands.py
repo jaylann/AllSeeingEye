@@ -101,7 +101,7 @@ class PersonCommands:
 
         persons = self.database.get_persons(**attributes_obj)
         for person in persons:
-            #Implement functioning print statment
+            # Implement functioning print statment
             click.echo(f"Person details: {person}")
 
 
@@ -128,7 +128,6 @@ def get_person_group(database):
         person_commands.get(address, dob, email, gender, name, nationality, occupation, phone_number,
                             relationship_status)
 
-
     @person.command()
     @click.option('--address', is_flag=True, help='Address of the person.')
     @click.option('--dob', is_flag=True, help='Date of birth of the person.')
@@ -150,6 +149,5 @@ def get_person_group(database):
     def remove(id):
         """Remove a person by ID."""
         person_commands.remove(id)
-
 
     return person
