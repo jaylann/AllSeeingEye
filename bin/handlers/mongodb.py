@@ -29,8 +29,8 @@ nationality = Nationality(addr.country, proof=proof)
 relationship = RelationshipStatus("Divorced", proof=proof)
 gender = Gender("Male", proof=proof)
 
-person = Person(dob, name_obj, addr, phone_number, nationality, email, gender,employment_history,
-                     occupation, relationship)
+person = Person(dob, name_obj, addr, phone_number, nationality, email, gender, employment_history,
+                occupation, relationship)
 
 
 class AllSeeingEye:
@@ -46,67 +46,50 @@ class AllSeeingEye:
         result = self.persons_collection.insert_one(person.data)
         return result.inserted_id
 
+    def _build_query(self, attribute_obj):
+        """Helper function to build MongoDB query based on an attribute object."""
+        query = {}
+        if attribute_obj:
+            for key, value in attribute_obj.__dict__().items():
+                if value:
+                    query[key] = value
+        return query
+
     def get_persons(self, person_id=None, DOB=None, name=None, address=None, phone_number=None, nationality=None,
                     email=None, employment_history=None, gender=None, occupation=None, relationship_status=None):
         query = {}
+
         if person_id:
             query["_id"] = {"$oid": person_id}
 
-        if DOB:
-            for key, value in DOB.__dict__().items():
-                if value:
-                    query[f"DOB.{key}"] = value
+        query.update({"DOB." + k: v for k, v in self._build_query(DOB).items()})
+        query.update({"name." + k: v for k, v in self._build_query(name).items()})
+        query.update({"address." + k: v for k, v in self._build_query(address).items()})
+        query.update({"phone_number." + k: v for k, v in self._build_query(phone_number).items()})
+        query.update({"nationality." + k: v for k, v in self._build_query(nationality).items()})
+        query.update({"email." + k: v for k, v in self._build_query(email).items()})
+        query.update({"gender." + k: v for k, v in self._build_query(gender).items()})
+        query.update({"occupation." + k: v for k, v in self._build_query(occupation).items()})
+        query.update({"relationship_status." + k: v for k, v in self._build_query(relationship_status).items()})
 
-        if name:
-            for key, value in name.__dict__().items():
-                if value:
-                    query[f"name.{key}"] = value
-
-        if address:
-            for key, value in address.__dict__().items():
-                if value:
-                    query[f"address.{key}"] = value
-
-        if phone_number:
-            for key, value in phone_number.__dict__().items():
-                if value:
-                    query[f"phone_number.{key}"] = value
-
-        if nationality:
-            for key, value in nationality.__dict__().items():
-                if value:
-                    query[f"nationality.{key}"] = value
-
-        if email:
-            for key, value in email.__dict__().items():
-                if value:
-                    query[f"email.{key}"] = value
-
+        # Handle employment_history with custom logic
         if employment_history:
-            pass
-        # Handle employment_history fields as needed
-        # (May require special handling if employment_history is a list)
+            or_conditions = []
+            for occupation in employment_history.occupations:
+                occupation_query = self._build_query(occupation)
+                if occupation_query:
+                    or_conditions.append({"employment_history.occupations": {"$elemMatch": occupation_query}})
+            if or_conditions:
+                query["$or"] = or_conditions
 
-        if gender:
-            for key, value in gender.__dict__().items():
-                if value:
-                    query[f"gender.{key}"] = value
-
-        if occupation:
-            for key, value in occupation.__dict__().items():
-                if value:
-                    query[f"occupation.{key}"] = value
-
-        if relationship_status:
-            for key, value in relationship_status.__dict__().items():
-                if value:
-                    query[f"relationship_status.{key}"] = value
         query_result = self.persons_collection.find(query)
         return [person_from_dict(person) for person in query_result]
+
 
     def remove_person(self, person_id):
         result = self.persons_collection.delete_one({"_id": person_id})
         return result.deleted_count
+
 
 test = AllSeeingEye()
 print(test.get_persons(name=name_obj))
