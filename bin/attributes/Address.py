@@ -3,6 +3,7 @@ import os
 from typing import Optional
 
 from bin.attributes.BaseAttribute import BaseAttribute
+from bin.handlers.PathHandlers import get_content_root
 from bin.objects.Proof import Proof
 
 
@@ -29,21 +30,9 @@ class Address(BaseAttribute):
 
     def _load_country_codes(self) -> dict:
         """Loads country codes from a JSON file."""
-        file_path = os.path.join(self.get_content_root(), '_internal', 'mappings', 'country_codes.json')
+        file_path = os.path.join(get_content_root(), '_internal', 'mappings', 'country_codes.json')
         with open(file_path, "r") as file:
             return json.load(file)
-
-    def get_content_root(self) -> str:
-        """
-        Retrieves the project root directory.
-
-        :return: Path to the project root directory.
-        """
-        # Get the directory of the current file
-        current_file_path = os.path.abspath(__file__)
-        # Navigate up to the project root (modify as needed for your directory structure)
-        project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
-        return project_root
 
     def _convert_country_to_code(self, country_name: Optional[str]) -> Optional[str]:
         """
