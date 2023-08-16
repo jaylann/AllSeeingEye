@@ -1,11 +1,13 @@
+from bin.entities.Person import Person
 from bin.objects.Annotation import Annotation
-
+from bin.handlers.GPTHandler import OpenAIAPI
 from bin.objects.BaseObject import BaseObject
 from bin.objects.Metadata import Metadata
 
 
 class Text(BaseObject):
-    def __init__(self, text, annotations=None, metadata=None, summary=None, associations=None, references=None):
+    def __init__(self, text, annotations: [Annotation] or Annotation = None, metadata: Metadata = None,
+                 summary: str = None, associations: [Person] = None, references: [BaseObject] = None):
         super().__init__()
         self._text = text
         self._annotations = annotations if annotations else []
@@ -13,6 +15,14 @@ class Text(BaseObject):
         self._summary = summary
         self._associations = associations
         self._references = references
+        self.openai = OpenAIAPI()
+
+    def generate_summary(self):
+        prompt = "Please summarize the following text as concise as possible while retaining all important information."
+        result = self.openai.generate_text(prompt=self.text, system_prompt=prompt, max_tokens=-1)
+        print(result)
+        self.summary = result.messages[0]
+        return result
 
     @property
     def summary(self):
