@@ -1,5 +1,8 @@
 from typing import List, Dict, Optional
 
+from bin.handlers.objects.GPTModels import Model
+from bin.handlers.objects.GPTModelsCost import ModelCost
+
 
 class GPTResponse:
     def __init__(self,
@@ -103,6 +106,36 @@ class GPTResponse:
     @system_prompt.setter
     def system_prompt(self, value: str):
         self._system_prompt = value
+
+    @property
+    def cost(self) -> float:
+        # Determine the model used
+        model = self._model
+
+        # Initialize cost variables
+        input_cost_per_1000_tokens = 0
+        output_cost_per_1000_tokens = 0
+
+        # Determine the cost per 1000 tokens based on the model
+        if model in [Model.GPT4.value, Model.GPT4_0613.value, Model.GPT4_0314.value]:
+            input_cost_per_1000_tokens = ModelCost.GPT4_8K_INPUT.value
+            output_cost_per_1000_tokens = ModelCost.GPT4_8K_OUTPUT.value
+        elif model in [Model.GPT4_32K.value, Model.GPT4_32K_0613.value, Model.GPT4_32K_0314.value]:
+            input_cost_per_1000_tokens = ModelCost.GPT4_32K_INPUT.value
+            output_cost_per_1000_tokens = ModelCost.GPT4_32K_OUTPUT.value
+        elif model in [Model.GPT3_5_TURBO.value, Model.GPT3_5_TURBO_0613.value, Model.GPT3_5_TURBO_0301.value]:
+            input_cost_per_1000_tokens = ModelCost.GPT3_5_TURBO_4K_INPUT.value
+            output_cost_per_1000_tokens = ModelCost.GPT3_5_TURBO_4K_OUTPUT.value
+        elif model in [Model.GPT3_5_TURBO_16K.value, Model.GPT3_5_TURBO_16K_0613.value]:
+            input_cost_per_1000_tokens = ModelCost.GPT3_5_TURBO_16K_INPUT.value
+            output_cost_per_1000_tokens = ModelCost.GPT3_5_TURBO_16K_OUTPUT.value
+        # Add more models and their respective costs as needed
+
+        # Calculate the total cost
+        total_cost = ((self._prompt_tokens * input_cost_per_1000_tokens) + (
+                    self._completion_tokens * output_cost_per_1000_tokens)) / 1000
+
+        return total_cost
 
     @classmethod
     def from_dict(cls, data_dict: Dict, prompt: Optional[str] = None, system_prompt: Optional[str] = None) -> 'GPTResponse':
