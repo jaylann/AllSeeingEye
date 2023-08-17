@@ -1,71 +1,133 @@
 from datetime import datetime
+from typing import List, Optional, Dict, Any, Union
+
+from bin.attributes.Name import Name
+from bin.entities.Person import Person
+from bin.utils.date import convert_to_date
 
 
 class Metadata:
-    def __init__(self, author=None, creation_date=None, modification_date=None, source=None, tags=None):
-        self._author = author
+    """
+    Metadata class to store and manage metadata information.
+
+    Attributes:
+        author (Union[str, Person], optional): Name of the author or a Person object.
+        creation_date (Union[datetime, str], optional): Date of creation.
+        modification_date (Union[datetime, str], optional): Date of last modification.
+        source (str, optional): Source of the metadata.
+        tags (List[str], optional): List of tags associated with the metadata.
+    """
+
+    def __init__(self,
+                 author: Optional[Union[str, Person]] = None,
+                 creation_date: Optional[Union[datetime, str]] = None,
+                 modification_date: Optional[Union[datetime, str]] = None,
+                 source: Optional[str] = None,
+                 tags: Optional[List[str]] = None):
+        """Initialize Metadata instance."""
+
+        # Validate input
+        self._validate_input("Author", author, [str, Person])
+        self._validate_input("Creation date", creation_date, [datetime, str])
+        self._validate_input("Modification date", modification_date, [datetime, str])
+        self._validate_input("Source", source, [str])
+        if tags:
+            for tag in tags:
+                self._validate_input("Tag", tag, [str])
+
+        # Initialize attributes
+        self._author = author if isinstance(author, Person) else (
+            Person(name=Name(author)) if author is not None else None)
+
         self._creation_date = creation_date if creation_date else datetime.now()
         self._modification_date = modification_date if modification_date else datetime.now()
         self._source = source
         self._tags = tags if tags else []
-        self._custom_metadata = {}
+        self._custom_metadata: Dict[str, Any] = {}
+
+    @staticmethod
+    def _validate_input(name: str, value: Any, allowed_types: List[type]):
+        """Helper method to validate input types."""
+        if value is not None and not any(isinstance(value, t) for t in allowed_types):
+            raise ValueError(f"{name} must be one of the types: {', '.join([str(t) for t in allowed_types])}.")
 
     @property
-    def author(self):
+    def author(self) -> Optional[Union[str, Person]]:
+        """Return the author."""
         return self._author
 
     @author.setter
-    def author(self, value):
-        self._author = value
+    def author(self, value: Optional[Union[str, Person]]):
+        """Set the author."""
+        self._validate_input("Author", value, [str, Person])
+        self._author = value if isinstance(value, Person) else Person(name=Name(value))
         self.update_modification_date()
 
     @property
-    def creation_date(self):
+    def creation_date(self) -> datetime:
+        """Return the creation date."""
         return self._creation_date
 
     @creation_date.setter
-    def creation_date(self, value):
-        self._creation_date = value
+    def creation_date(self, value: Union[str, datetime]):
+        """Set the creation date."""
+        self._validate_input("Creation date", value, [datetime, str])
+        self._creation_date = value if isinstance(value, datetime) else convert_to_date(value)
         self.update_modification_date()
 
     @property
-    def modification_date(self):
+    def modification_date(self) -> datetime:
+        """Return the modification date."""
         return self._modification_date
 
     @modification_date.setter
-    def modification_date(self, value):
+    def modification_date(self, value: datetime):
+        """Set the modification date."""
+        self._validate_input("Modification date", value, [datetime])
         self._modification_date = value
 
     @property
-    def source(self):
+    def source(self) -> Optional[str]:
+        """Return the source."""
         return self._source
 
     @source.setter
-    def source(self, value):
+    def source(self, value: Optional[str]):
+        """Set the source."""
+        self._validate_input("Source", value, [str])
         self._source = value
         self.update_modification_date()
 
     @property
-    def tags(self):
+    def tags(self) -> List[str]:
+        """Return the list of tags."""
         return self._tags
 
     @tags.setter
-    def tags(self, value):
-        if isinstance(value, list):
-            self._tags = value
-            self.update_modification_date()
+    def tags(self, value: List[str]):
+        """Set the tags."""
+        for tag in value:
+            self._validate_input("Tag", tag, [str])
+        self._tags = value
+        self.update_modification_date()
 
-    def add_custom_metadata(self, key, value):
+    def add_custom_metadata(self, key: str, value: Any):
+        """Add custom metadata."""
+        self._validate_input("Key", key, [str])
         self._custom_metadata[key] = value
         self.update_modification_date()
 
-    def get_custom_metadata(self, key):
+    def get_custom_metadata(self, key: str) -> Any:
+        """Retrieve a custom metadata value by key."""
         return self._custom_metadata.get(key, None)
 
-    def delete_custom_metadata(self, key):
+    def delete_custom_metadata(self, key: str):
+        """Delete a custom metadata entry by key."""
+        self._validate_input("Key", key, [str])
         if key in self._custom_metadata:
             del self._custom_metadata[key]
             self.update_modification_date()
 
     def update_modification_date(self):
+        """Update the modification date to the current datetime."""
         self._modification_date = datetime.now()
