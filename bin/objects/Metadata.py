@@ -3,6 +3,7 @@ from typing import List, Optional, Dict, Any, Union
 
 from bin.attributes.Name import Name
 from bin.entities.Person import Person
+from bin.handlers.InputHandlers import validate_input
 from bin.utils.date import convert_to_date
 
 
@@ -27,13 +28,13 @@ class Metadata:
         """Initialize Metadata instance."""
 
         # Validate input
-        self._validate_input("Author", author, [str, Person])
-        self._validate_input("Creation date", creation_date, [datetime, str])
-        self._validate_input("Modification date", modification_date, [datetime, str])
-        self._validate_input("Source", source, [str])
+        validate_input("Author", author, [str, Person])
+        validate_input("Creation date", creation_date, [datetime, str])
+        validate_input("Modification date", modification_date, [datetime, str])
+        validate_input("Source", source, [str])
         if tags:
             for tag in tags:
-                self._validate_input("Tag", tag, [str])
+                validate_input("Tag", tag, [str])
 
         # Initialize attributes
         self._author = author if isinstance(author, Person) else (
@@ -44,12 +45,7 @@ class Metadata:
         self._source = source
         self._tags = tags if tags else []
         self._custom_metadata: Dict[str, Any] = {}
-
-    @staticmethod
-    def _validate_input(name: str, value: Any, allowed_types: List[type]):
-        """Helper method to validate input types."""
-        if value is not None and not any(isinstance(value, t) for t in allowed_types):
-            raise ValueError(f"{name} must be one of the types: {', '.join([str(t) for t in allowed_types])}.")
+    
 
     @property
     def author(self) -> Optional[Union[str, Person]]:
@@ -59,7 +55,7 @@ class Metadata:
     @author.setter
     def author(self, value: Optional[Union[str, Person]]):
         """Set the author."""
-        self._validate_input("Author", value, [str, Person])
+        validate_input("Author", value, [str, Person])
         self._author = value if isinstance(value, Person) else Person(name=Name(value))
         self.update_modification_date()
 
@@ -71,7 +67,7 @@ class Metadata:
     @creation_date.setter
     def creation_date(self, value: Union[str, datetime]):
         """Set the creation date."""
-        self._validate_input("Creation date", value, [datetime, str])
+        validate_input("Creation date", value, [datetime, str])
         self._creation_date = value if isinstance(value, datetime) else convert_to_date(value)
         self.update_modification_date()
 
@@ -83,7 +79,7 @@ class Metadata:
     @modification_date.setter
     def modification_date(self, value: datetime):
         """Set the modification date."""
-        self._validate_input("Modification date", value, [datetime])
+        validate_input("Modification date", value, [datetime])
         self._modification_date = value
 
     @property
@@ -94,7 +90,7 @@ class Metadata:
     @source.setter
     def source(self, value: Optional[str]):
         """Set the source."""
-        self._validate_input("Source", value, [str])
+        validate_input("Source", value, [str])
         self._source = value
         self.update_modification_date()
 
@@ -107,13 +103,13 @@ class Metadata:
     def tags(self, value: List[str]):
         """Set the tags."""
         for tag in value:
-            self._validate_input("Tag", tag, [str])
+            validate_input("Tag", tag, [str])
         self._tags = value
         self.update_modification_date()
 
     def add_custom_metadata(self, key: str, value: Any):
         """Add custom metadata."""
-        self._validate_input("Key", key, [str])
+        validate_input("Key", key, [str])
         self._custom_metadata[key] = value
         self.update_modification_date()
 
@@ -123,7 +119,7 @@ class Metadata:
 
     def delete_custom_metadata(self, key: str):
         """Delete a custom metadata entry by key."""
-        self._validate_input("Key", key, [str])
+        validate_input("Key", key, [str])
         if key in self._custom_metadata:
             del self._custom_metadata[key]
             self.update_modification_date()

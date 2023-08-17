@@ -1,4 +1,5 @@
 import re
+from typing import Any, List
 
 
 def sanitize_input(input_string):
@@ -6,6 +7,19 @@ def sanitize_input(input_string):
     sanitized_input = re.sub(r'[^\w\s.,!?@+-]', '', input_string)
     return sanitized_input.strip()
 
+def validate_input(name: str, value: Any, allowed_types: List[type]) -> None:
+    """Validate input types for the given value.
+
+    Args:
+        name (str): Name of the variable (for error messaging).
+        value (Any): The value to be checked.
+        allowed_types (List[type]): A list of allowed types for the value.
+
+    Raises:
+        ValueError: If the value is not one of the allowed types.
+    """
+    if value is not None and not any(isinstance(value, t) for t in allowed_types):
+        raise ValueError(f"{name} must be one of the types: {', '.join([str(t) for t in allowed_types])}.")
 
 def get_user_input(prompt, required=False, input_type=str):
     user_input = ''
