@@ -9,7 +9,7 @@ from bin.handlers.objects.GPTModels import Model
 from bin.handlers.objects.GPTResponse import GPTResponse
 
 
-class OpenAIAPI:
+class GPTHandler:
     def __init__(self):
         """
         Initializes the OpenAIAPI class by setting up the API key and encoder.

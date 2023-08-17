@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, Mock
 
-from bin.handlers.GPTHandler import OpenAIAPI
+from bin.handlers.GPTHandler import GPTHandler
 from bin.handlers.objects.GPTResponse import GPTResponse
 
 
@@ -11,7 +11,7 @@ class TestOpenAIAPI(unittest.TestCase):
     @patch('bin.handlers.ConfigHandler.load_env_vars')  # Mock the load_env_vars method
     def setUp(self, mock_load_env_vars, mock_getenv):
         mock_getenv.return_value = "fake_api_key"
-        self.api = OpenAIAPI()
+        self.api = GPTHandler()
 
     def test_load_api_key_success(self):
         self.assertEqual(self.api.api_key, "fake_api_key")
@@ -19,7 +19,7 @@ class TestOpenAIAPI(unittest.TestCase):
     @patch('os.getenv', return_value=None)  # Mock the os.getenv method to return None
     def test_load_api_key_failure(self, mock_getenv):
         with self.assertRaises(ValueError):
-            OpenAIAPI()
+            GPTHandler()
 
     @patch('tiktoken.get_encoding')
     def test_count_tokens(self, mock_get_encoding):
