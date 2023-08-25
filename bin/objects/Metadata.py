@@ -127,3 +127,45 @@ class Metadata:
     def update_modification_date(self):
         """Update the modification date to the current datetime."""
         self._modification_date = datetime.now()
+
+    def __dict__(self):
+        """
+        Convert the Metadata instance to a dictionary representation.
+
+        Returns:
+            dict: A dictionary representation of the Metadata instance.
+        """
+        result = {
+            'author': self._author.uid if isinstance(self._author, Person) else self._author,
+            'creation_date': self._creation_date,
+            'modification_date': self._modification_date,
+            'source': self._source,
+            'tags': self._tags,
+            'custom_metadata': self._custom_metadata
+        }
+
+        return result
+
+    @classmethod
+    def from_dict(cls, data_dict: Dict[str, Any]) -> 'Metadata':
+        """Create a Metadata instance from a dictionary."""
+
+        author = data_dict.get('author')
+        creation_date = data_dict.get('creation_date')
+        modification_date = data_dict.get('modification_date')
+        source = data_dict.get('source')
+        tags = data_dict.get('tags')
+
+        # Convert strings to datetime objects if necessary
+        if creation_date and isinstance(creation_date, str):
+            creation_date = convert_to_date(creation_date)
+        if modification_date and isinstance(modification_date, str):
+            modification_date = convert_to_date(modification_date)
+
+        # Return the constructed Metadata object
+        return cls(author=author,
+                   creation_date=creation_date,
+                   modification_date=modification_date,
+                   source=source,
+                   tags=tags)
+
