@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from bin.entities.Person import person_from_dict
+from bin.entities.Person import Person
 
 
 class AllSeeingEye:
@@ -88,7 +88,7 @@ class AllSeeingEye:
                 query["$or"] = or_conditions
 
         query_result = self.persons_collection.find(query)
-        return [person_from_dict(person) for person in query_result]
+        return [Person.from_dict(person) for person in query_result]
 
     def _form_query(self, filters):
         """

@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from bin.entities.Person import person_from_dict
+from bin.entities.Person import Person
 
 
 class TestPersonFromDict(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestPersonFromDict(unittest.TestCase):
             'occupation': {'job_title': 'Software Engineer', 'company_name': 'Google', 'industry': 'Technology', 'years_experience': 3, 'start_date': datetime(2019, 8, 23), 'end_date': None, 'proof': [{'reason': 'placeholder'}]},
             'relationship_status': {'status': 'Divorced', 'proof': [{'reason': 'placeholder'}]}
         }
-        person = person_from_dict(person_dict)
+        person = Person.from_dict(person_dict)
         assert person.data == person_dict, "Test failed: Normal case"
 
     def test_person_from_dict_missing_fields(self):
@@ -31,7 +31,7 @@ class TestPersonFromDict(unittest.TestCase):
             'address': None, 'phone_number': None, 'email': None, 'employment_history': None, 'gender': None,
             'occupation': None, 'relationship_status': None, "nationality": None
         }
-        person = person_from_dict(person_dict)
+        person = Person.from_dict(person_dict)
         self.assertEqual(person.DOB.DOB, datetime(1990, 8, 15), "Test failed: Missing fields")
         self.assertEqual(person.name.name, 'John', "Test failed: Missing fields")
         self.assertIsNone(person.address, "Test failed: Missing fields")
@@ -47,7 +47,7 @@ class TestPersonFromDict(unittest.TestCase):
             'occupation': None, 'relationship_status': None, "nationality": None
         }
         with self.assertRaises(Exception):
-            person_from_dict(person_dict)
+            Person.from_dict(person_dict)
             self.fail("Test failed: Incorrect fields")  # Should raise an exception
 
 
