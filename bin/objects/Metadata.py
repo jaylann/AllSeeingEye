@@ -5,7 +5,7 @@ from bin.attributes.Name import Name
 from bin.entities.Person import Person
 from bin.handlers.InputHandlers import validate_input
 from bin.utils.date import convert_to_date
-
+from bson.objectid import ObjectId
 
 class Metadata:
     """
@@ -55,8 +55,11 @@ class Metadata:
     @author.setter
     def author(self, value: Optional[Union[str, Person]]):
         """Set the author."""
-        validate_input("Author", value, [str, Person])
-        self._author = value if isinstance(value, Person) else Person(name=Name(value))
+        if not value:
+            self._author = None
+        else:
+            validate_input("Author", value, [str, Person])
+            self._author = value if isinstance(value, Person) else Person(name=Name(value))
         self.update_modification_date()
 
     @property
@@ -103,8 +106,9 @@ class Metadata:
     def tags(self, value: List[str]):
         """Set the tags."""
         for tag in value:
-            validate_input("Tag", tag, [str])
-        self._tags = value
+            if tag:
+                validate_input("Tag", tag, [str])
+                self._tags.append(tag)
         self.update_modification_date()
 
     def add_custom_metadata(self, key: str, value: Any):
@@ -149,8 +153,15 @@ class Metadata:
     @classmethod
     def from_dict(cls, data_dict: Dict[str, Any]) -> 'Metadata':
         """Create a Metadata instance from a dictionary."""
-
         author = data_dict.get('author')
+        if isinstance(author, str):
+            author=Person(name=Name(author))
+        elif isinstance(author, ObjectId):
+            author=Person.find_by_attributes(person_id=author)
+        elif isinstance(author, Person):
+            pass
+        else:
+            raise ValueError(f"Invalid type {type(author)} for author. Expected str/ObjectId/Person")
         creation_date = data_dict.get('creation_date')
         modification_date = data_dict.get('modification_date')
         source = data_dict.get('source')
