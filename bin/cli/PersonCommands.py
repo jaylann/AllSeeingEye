@@ -71,9 +71,9 @@ class PersonCommands:
             attribute: cls(**self.get_attribute_input(attribute, required=(attribute in ['dob', 'email', 'gender'])))
             for attribute, (flag, cls) in attribute_mapping.items() if flag
         }
-
-        uid = self.database.add_person(Person(**attributes_obj))
-        click.echo(f"Person added successfully with Unique ID: {uid}")
+        person = Person(**attributes_obj)
+        person.save()
+        click.echo(f"Person added successfully with Unique ID: {person.uid}")
 
     def remove(self, uid):
         """Remove a person by ID."""
