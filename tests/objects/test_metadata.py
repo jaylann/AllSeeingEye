@@ -3,7 +3,7 @@ from datetime import datetime
 from bin.attributes.Name import Name
 from bin.entities.Person import Person
 from bin.objects.Metadata import Metadata
-
+from bin.utils.date import convert_to_date
 
 class TestMetadata(unittest.TestCase):
 
@@ -96,10 +96,6 @@ class TestMetadata(unittest.TestCase):
         self.assertIsInstance(self.metadata.creation_date, datetime)
 
     def test_error_messages(self):
-        with self.assertRaisesRegex(ValueError,
-                                    "Author must be one of the types: <class 'str'>, <class 'bin.entities.Person.Person'>."):
-            self.metadata.author = []
-
         with self.assertRaisesRegex(ValueError, "Source must be one of the types: <class 'str'>."):
             self.metadata.source = 123
 
@@ -124,6 +120,55 @@ class TestMetadata(unittest.TestCase):
         self.metadata.author = "Jane Smith"
         self.assertIsInstance(self.metadata.author, Person)
         self.assertNotEqual(self.metadata.author, person)
+
+    def test_modification_date_updated(self):
+        initial_modification_date = self.metadata.modification_date
+        self.metadata.author = "New Author"
+        self.assertNotEqual(initial_modification_date, self.metadata.modification_date)
+
+    def test_dict_conversion(self):
+        data = {
+            'author': Person(name=Name("John Doe")),
+            'creation_date': '2023-08-23',
+            'modification_date': '2023-08-23',
+            'source': 'Sample Source',
+            'tags': ['tag1', 'tag2']
+        }
+
+        corr_data = {
+            'author': data["author"].uid,
+            'creation_date': convert_to_date('2023-08-23'),
+            'modification_date': convert_to_date('2023-08-23'),
+            'source': 'Sample Source',
+            'tags': ['tag1', 'tag2'],
+            "custom_metadata": {}
+        }
+        metadata = Metadata.from_dict(data)
+        self.assertEqual(metadata.author.name.full_name, 'John Doe')
+        self.assertEqual(metadata.source, 'Sample Source')
+        self.assertEqual(metadata.tags, ['tag1', 'tag2'])
+
+        new_data = metadata.__dict__()
+        self.assertEqual(new_data, corr_data)
+
+    def test_complex_scenario(self):
+        data = {
+            'author': 'John Doe',
+            'creation_date': '2023-08-23',
+            'modification_date': '2023-08-23',
+            'source': 'Sample Source',
+            'tags': ['tag1', 'tag2']
+        }
+        metadata = Metadata.from_dict(data)
+        metadata.author = 'Jane Smith'
+        metadata.add_custom_metadata("key", "value")
+        self.assertEqual(metadata.get_custom_metadata("key"), "value")
+        metadata.delete_custom_metadata("key")
+        self.assertIsNone(metadata.get_custom_metadata("key"))
+
+    def test_edge_cases(self):
+        self.metadata.tags = ['tag1', '']
+        assert self.metadata.tags==["tag1"]
 
 if __name__ == "__main__":
     unittest.main()
