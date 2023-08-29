@@ -12,16 +12,19 @@ from bin.attributes.Occupation import Occupation
 from bin.attributes.RelationshipStatus import RelationshipStatus
 from bin.attributes.Gender import Gender
 from bin.objects.Proof import Proof
+from bson.objectid import ObjectId
+from bin.handlers.mongodb import AllSeeingEye
 
-
-
+connector = AllSeeingEye()
 
 
 class Person:
+    COLLECTION_NAME = 'Persons'
+
     def __init__(self, dob: DOB = None, name: Name = None, address: Address = None, phone_number: PhoneNumber = None,
                  nationality: Nationality = None, email: Email = None,
-                 gender: Gender = None, employment_history:EmploymentHistory=None, occupation: Occupation = None,
-                 relationship_status: RelationshipStatus = None):
+                 gender: Gender = None, employment_history: EmploymentHistory = None, occupation: Occupation = None,
+                 relationship_status: RelationshipStatus = None, uid=None):
         self._DOB = dob
         self._name = name
         self._phone_number = phone_number
@@ -29,16 +32,105 @@ class Person:
         self._email = email
         self._gender = gender
         self._occupation = occupation
-        self._employment_history = EmploymentHistory([self.occupation]) if not employment_history and self.occupation else employment_history
+        self._employment_history = EmploymentHistory(
+            [self.occupation]) if not employment_history and self.occupation else employment_history
         self._relationship_status = relationship_status
         self._address = address if address else Address(country=self.estimate_location()) \
             if self._phone_number else None
+        self.uid = ObjectId() if not uid else uid
+
+    def save(self):
+        connector.insert_one(self.COLLECTION_NAME, self.data)
+
+    @classmethod
+    def find_by_attributes(cls, person_id=None, DOB=None, name=None, address=None, phone_number=None, nationality=None,
+                           email=None, employment_history=None, gender=None, occupation=None, relationship_status=None):
+        """
+        Retrieves persons based on the provided filters.
+
+        Args:
+        - person_id (ObjectId, optional): The ID of the person.
+        - DOB (DOB, optional): Date of birth filter.
+        ... [other filters]
+
+        Returns:
+        - list[Person]: List of person objects.
+        """
+        query = cls._form_query({
+            "_id": person_id,
+            "DOB": DOB,
+            "name": name,
+            "address": address,
+            "phone_number": phone_number,
+            "nationality": nationality,
+            "email": email,
+            "gender": gender,
+            "occupation": occupation,
+            "relationship_status": relationship_status
+        })
+
+        # Handle employment_history with custom logic
+        if employment_history:
+            or_conditions = []
+            for occupation in employment_history.occupations:
+                occupation_query = connector._build_query(occupation)
+                if occupation_query:
+                    or_conditions.append({"employment_history.occupations": {"$elemMatch": occupation_query}})
+            if or_conditions:
+                query["$or"] = or_conditions
+
+        query_result = connector.find(cls.COLLECTION_NAME, query)
+        return [Person.from_dict(person) for person in query_result]
+
+    @classmethod
+    def _form_query(cls, filters):
+        """
+        Helper function to form a MongoDB query based on filters.
+
+        Args:
+        - filters (dict): Dictionary of filters.
+
+        Returns:
+        - dict: The formed query.
+        """
+        query = {}
+        for key, value in filters.items():
+            print(key, value)
+            if value is not None:
+                if isinstance(value, (int, str, float, bool, bytes)):  # Check for basic data types
+                    query[key] = value
+                else:
+                    query.update(
+                        {f"{key}.{sub_key}": sub_value for sub_key, sub_value in cls._build_query(value).items()})
+        return query
+
+    @classmethod
+    def _build_query(cls, attribute_obj):
+        """
+        Helper function to build MongoDB query based on an attribute object.
+
+        Args:
+        - attribute_obj (obj): The attribute object.
+
+        Returns:
+        - dict: The query dictionary.
+        """
+        query = {}
+        if attribute_obj is not None:
+            for key, value in attribute_obj.__dict__().items():
+                if value:
+                    query[key] = value
+        return query
+
+    def remove(self):
+        connector.delete_one(self.COLLECTION_NAME, {"_id": self.uid})
 
     @classmethod
     def from_dict(cls, person_dict):
         def create_proof(proof_data):
             return [Proof(**data) for data in proof_data] if proof_data else None
 
+        uid = ObjectId(person_dict["_id"])
         # Extracting DOB
         dob_data = person_dict['DOB']
         dob = DOB(dob=dob_data['DOB'], proof=create_proof(dob_data['proof'])) if dob_data else None
@@ -105,7 +197,8 @@ class Person:
             employment_history=employment_history,
             gender=gender,
             occupation=occupation,
-            relationship_status=relationship_status
+            relationship_status=relationship_status,
+            uid=uid
         )
 
         return person
@@ -225,6 +318,7 @@ class Person:
     @property
     def data(self):
         return {
+            "_id": self.uid,
             "DOB": self.DOB.__dict__() if self.DOB else None,
             "name": self.name.__dict__() if self.name else None,
             "address": self.address.__dict__() if self.address else None,
