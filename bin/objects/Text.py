@@ -1,6 +1,9 @@
 import json
 from typing import Optional, List, Union
 
+from bson import ObjectId
+
+from bin.attributes.Name import Name
 from bin.entities.Person import Person
 from bin.handlers.InputHandlers import validate_input
 from bin.objects.Annotation import Annotation
@@ -11,6 +14,7 @@ from bin.handlers.objects.GPTModels import Model
 
 
 class Text(BaseObject):
+    COLLECTION_NAME = "Texts"
 
     def __init__(self,
                  text: Optional[str] = None,
@@ -81,7 +85,8 @@ class Text(BaseObject):
             "that's life', 'our usual meeting place': 'Refers to a commonly known location like a cafe or park'}].\n"
             "Ensure the response is in the exact JSON-like format described above. Analyze the following text:\n")
 
-        result = self.openai.generate_text(prompt=self.text, system_prompt=sys_prompt, max_tokens=-1,model=Model.GPT3_5_TURBO)
+        result = self.openai.generate_text(prompt=self.text, system_prompt=sys_prompt, max_tokens=-1,
+                                           model=Model.GPT3_5_TURBO)
         try:
             response = json.loads(result.messages[0])
 
@@ -153,10 +158,32 @@ class Text(BaseObject):
         return self._associations
 
     @associations.setter
-    def associations(self, value: list or str) -> None:
-        """Setter for the text summary."""
-        validate_input("associations", value, [list, type(None), str])
-        self._associations = value if isinstance(value, list) else list(value)
+    def associations(self, value: Union[List, str]) -> None:
+        """
+        Setter for the text summary.
+        """
+        validate_input("associations", value, [list, None, str])
+
+        if not isinstance(value, list):
+            value = [value]
+
+        new_associations = []
+
+        for association in value:
+            if isinstance(association, str):
+                person = Person.find_by_attributes(name=Name(association))
+                if not person:
+                    person = Person(name=Name(association))
+                new_associations.append(person)
+
+            elif isinstance(association, Person):
+                new_associations.append(association)
+
+            elif isinstance(association, ObjectId):
+                person = Person.find_by_attributes(person_id=association)
+                new_associations.append(person)
+
+        self._associations = new_associations
 
     @property
     def references(self) -> list:
@@ -166,6 +193,7 @@ class Text(BaseObject):
     @references.setter
     def references(self, value: list or str) -> None:
         """Setter for the text summary."""
+        # Implement searching for Objects and linking them
         validate_input("references", value, [list, type(None), str])
         self._references = value if isinstance(value, list) else list(value)
 
@@ -301,8 +329,7 @@ class Text(BaseObject):
             self._metadata.delete_custom_metadata(key)
             self._metadata.update_modification_date()
 
-    @property
-    def data(self) -> dict:
+    def to_dict(self) -> dict:
         """
         Get the data representation of the text.
 
@@ -316,5 +343,3 @@ class Text(BaseObject):
             'associations': [assoc.uid for assoc in self._associations] if self._associations else [],
             'references': [ref.uid for ref in self._references] if self._references else []
         }
-
-
