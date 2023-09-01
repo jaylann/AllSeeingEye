@@ -1,3 +1,4 @@
+import json
 from typing import Optional, List, Union
 
 from bin.entities.Person import Person
@@ -6,6 +7,7 @@ from bin.objects.Annotation import Annotation
 from bin.handlers.GPTHandler import GPTHandler
 from bin.objects.BaseObject import BaseObject
 from bin.objects.Metadata import Metadata
+from bin.handlers.objects.GPTModels import Model
 
 
 class Text(BaseObject):
@@ -37,6 +39,10 @@ class Text(BaseObject):
         self._summary = summary
         self._associations = associations
         self._references = references
+        self.ai_summary = False
+        self.ai_associations = False
+        self.ai_references = False
+        self.ai_annotations = False
         self.openai = GPTHandler()
 
     def _validate_inputs(self,
@@ -66,6 +72,58 @@ class Text(BaseObject):
         if not text:
             raise ValueError("The 'text' must be provided.")
 
+    def generate_attributes(self):
+        sys_prompt = (
+            "Your task is to analyze the provided text and extract specific attributes from it in a structured JSON format. Here's a breakdown of what's needed:\n"
+            "- 'associations': List names of any individuals mentioned or implied in the text. Example: ['Max Mustermann', 'John Joseph Doe'].\n"
+            "- 'references': List any objects, events, or topics the text might reference. Example: ['Graduation Ceremony John Doe', 'Chatlog between John Doe and Max Mustermann'].\n"
+            "- 'annotations': Include explanations or interpretations of specific parts of the text. Format each as a dictionary. Example: [{'cest la vie': 'French phrase meaning "
+            "that's life', 'our usual meeting place': 'Refers to a commonly known location like a cafe or park'}].\n"
+            "Ensure the response is in the exact JSON-like format described above. Analyze the following text:\n")
+
+        result = self.openai.generate_text(prompt=self.text, system_prompt=sys_prompt, max_tokens=-1,model=Model.GPT3_5_TURBO)
+        try:
+            response = json.loads(result.messages[0])
+
+        except Exception as e:
+            print("Failed to parse JSON:", e)
+            response = {}
+
+        # Extracting the values from the dictionary and assigning them to separate variables
+        associations = response.get('associations', [])
+        references = response.get('references', [])
+        annotations = response.get('annotations', [])
+        self.ai_references, self.ai_annotations, self.ai_associations = True, True, True
+
+        # If any of the attributes are not in the correct format, set them to empty lists/dicts
+        if not isinstance(associations, list):
+            associations = []
+            self.ai_associations = False
+            print("Error: 'associations' is not in the correct format.")
+
+        if not isinstance(references, list):
+            references = []
+            self.ai_references = False
+            print("Error: 'references' is not in the correct format.")
+
+        if not isinstance(annotations, list):
+            annotations = []
+            self.ai_annotations = False
+            print("Error: 'Annotations' is not in the correct format.")
+        for annotation in annotations:
+            subtext = list(annotation.keys())[0]
+            start_index = self.text.lower().find(subtext.lower())
+
+            # Check if subtext is found in text
+            if start_index == -1:
+                continue
+
+            end_index = start_index + len(subtext) - 1
+            indexes = list(range(start_index, end_index + 1))
+            self.add_annotation(indexes, annotation[subtext])
+        self.associations, self.references = associations, references
+        return associations, references, annotations
+
     def generate_summary(self) -> str:
         """
         Generate a summary for the text using the GPTHandler.
@@ -75,6 +133,7 @@ class Text(BaseObject):
         prompt = "Please summarize the following text as concise as possible while retaining all important information."
         result = self.openai.generate_text(prompt=self.text, system_prompt=prompt, max_tokens=-1)
         self.summary = result.messages[0]
+        self.ai_summary = True
         return self.summary
 
     @property
@@ -87,6 +146,28 @@ class Text(BaseObject):
         """Setter for the text summary."""
         validate_input("summary", value, [str, type(None)])
         self._summary = value
+
+    @property
+    def associations(self) -> list:
+        """Getter for the text summary."""
+        return self._associations
+
+    @associations.setter
+    def associations(self, value: list or str) -> None:
+        """Setter for the text summary."""
+        validate_input("associations", value, [list, type(None), str])
+        self._associations = value if isinstance(value, list) else list(value)
+
+    @property
+    def references(self) -> list:
+        """Getter for the text summary."""
+        return self._references
+
+    @references.setter
+    def references(self, value: list or str) -> None:
+        """Setter for the text summary."""
+        validate_input("references", value, [list, type(None), str])
+        self._references = value if isinstance(value, list) else list(value)
 
     @property
     def text(self) -> str:
